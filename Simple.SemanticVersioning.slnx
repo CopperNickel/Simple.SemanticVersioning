@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Simple.SemanticVersioning.Test/Simple.SemanticVersioning.Test.csproj" />
+  <Project Path="Simple.SemanticVersioning/Simple.SemanticVersioning.csproj" />
+</Solution>
