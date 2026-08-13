@@ -30,7 +30,7 @@ public sealed class SemanticVersion :
   /// Version part
   /// </summary>
   /// <param name="index">Index</param>
-  /// <returns>version part or 0</returns>
+  /// <returns>Version part or 0</returns>
   public long this[int index] {
     get => index >= 0 && index < m_Parts.Count ? m_Parts[index] : 0;
   }
@@ -51,7 +51,7 @@ public sealed class SemanticVersion :
   public long Patch => this[2];
 
   /// <summary>
-  /// Patch
+  /// Revision
   /// </summary>
   public long Revision => this[3];
 
@@ -107,13 +107,12 @@ public sealed class SemanticVersion :
 
     var removeFrom = 0;
 
-    for (var i = m_Parts.Count - 1; i >= 0; --i) {
+    for (var i = m_Parts.Count - 1; i >= 0; --i)
       if (m_Parts[i] != 0) {
         removeFrom = i + 1;
 
         break;
       }
-    }
 
     m_Parts.RemoveRange(removeFrom, m_Parts.Count - removeFrom);
 
@@ -171,9 +170,7 @@ public sealed class SemanticVersion :
   /// To string
   /// </summary>
   /// <returns>Formatted version</returns>
-  public override string ToString() {
-    return ToString(null, null);
-  }
+  public override string ToString() => ToString(null, null);
 
   #endregion IFormattable
 
@@ -211,9 +208,7 @@ public sealed class SemanticVersion :
   /// Hash code
   /// </summary>
   /// <returns>Hash code</returns>
-  public override int GetHashCode() {
-    return HashCode.Combine(m_Parts[0], m_Parts[1]);
-  }
+  public override int GetHashCode() => HashCode.Combine(m_Parts[0], m_Parts[1]);
 
   #endregion IEquatable<SemanticVersion>
 
@@ -239,9 +234,8 @@ public sealed class SemanticVersion :
       var leftValue = i < left.m_Parts.Count ? left.m_Parts[i] : 0;
       var rightValue = i < right.m_Parts.Count ? right.m_Parts[i] : 0;
 
-      if (leftValue != rightValue) {
+      if (leftValue != rightValue)
         return leftValue < rightValue ? -1 : 1;
-      }
     }
 
     if (string.IsNullOrEmpty(left.Prerelease) && !string.IsNullOrEmpty(right.Prerelease))
@@ -286,11 +280,10 @@ public sealed class SemanticVersion :
   /// <param name="provider">Provider to use</param>
   /// <returns>Parsed semantic version</returns>
   /// <exception cref="FormatException">If span is of invalid format</exception>
-  public static SemanticVersion Parse(ReadOnlySpan<char> s, IFormatProvider? provider) {
-    return TryParse(s, provider, out var result)
-        ? result
-        : throw new FormatException("Span can't be parsed into semantic version");
-  }
+  public static SemanticVersion Parse(ReadOnlySpan<char> s, IFormatProvider? provider) =>
+    TryParse(s, provider, out var result)
+      ? result
+      : throw new FormatException("Span can't be parsed into semantic version");
 
   /// <summary>
   /// Parse span into semantic version
@@ -377,11 +370,10 @@ public sealed class SemanticVersion :
   /// <param name="provider">Provider to use (invariant culture by default)</param>
   /// <returns>Parsed semantic version</returns>
   /// <exception cref="FormatException">If span is of invalid format</exception>
-  public static SemanticVersion Parse(string? s, IFormatProvider? provider) {
-    return TryParse(s, provider, out var result)
-        ? result
-        : throw new FormatException("String can't be parsed into semantic version");
-  }
+  public static SemanticVersion Parse(string? s, IFormatProvider? provider) =>
+    TryParse(s, provider, out var result)
+      ? result
+      : throw new FormatException("String can't be parsed into semantic version");
 
   /// <summary>
   /// Parse into semantic version
