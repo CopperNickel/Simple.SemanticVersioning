@@ -13,6 +13,7 @@
     <RepositoryUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>SemanticVersion</PackageTags>
+    <PackageIcon>..\icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
