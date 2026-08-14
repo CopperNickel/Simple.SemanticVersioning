@@ -3,48 +3,77 @@ using System.Text.Json;
 
 namespace Simple.SemanticVersioning.Test;
 
-public sealed class SemanticVersionJsonConverterTest
-{
-    private static readonly JsonSerializerOptions Options = new() 
-    {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+public sealed class SemanticVersionJsonConverterTest {
+  private static readonly JsonSerializerOptions Options = new() {
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+  };
+
+  [Theory]
+  [MemberData(nameof(ValidVersions))]
+  public void Serialize_Serialized(SemanticVersion version) {
+    // Act
+    var json = JsonSerializer.Serialize(version, Options);
+
+    // Assert
+    var expectedJson = "\"" + version.ToString().Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+
+    var actual = JsonSerializer.Deserialize<SemanticVersion>(json);
+
+    Assert.Equal(version, actual);
+    Assert.Equal(json, expectedJson);
+  }
+
+  [Fact]
+  public void Serialize_Null_Serialized() {
+    // Act
+    var json = JsonSerializer.Serialize((SemanticVersion)null!);
+
+    // Assert
+    Assert.Equal("null", json);
+
+    var actual = JsonSerializer.Deserialize<SemanticVersion>(json);
+
+    Assert.Null(actual);
+  }
+
+  [Fact]
+  public void Seialize_InvalidVersion_ThrowsJsonException() {
+    // Arrange
+    var invalidVersion = "\"invalid\"";
+
+    // Act & Assert
+    Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<SemanticVersion>(invalidVersion, Options));
+  }
+
+  [Fact]
+  public void Serilize_AsDictionary_Serialized() {
+    // Arrange
+    var dict = new Dictionary<SemanticVersion, int> {
+      { new SemanticVersion(1, 2, 3), 42 }
     };
 
-    [Theory]
-    [MemberData(nameof(ValidVersions))]
-    public void Serialize_Serialized(SemanticVersion version)
-    {
-        // Act
-        var json = JsonSerializer.Serialize(version, Options);
+    // Act
+    var json = JsonSerializer.Serialize(dict, Options);
 
-        // Assert
-        var expectedJson = "\"" + version.ToString().Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+    // Assert
+    var actual = JsonSerializer.Deserialize<Dictionary<SemanticVersion, int>>(json, Options);
 
-        var actual = JsonSerializer.Deserialize<SemanticVersion>(json);
+    Assert.Equal(dict, actual);
+  }
 
-        Assert.Equal(version, actual);
-        Assert.Equal(json, expectedJson);
-    }
+  [Fact]
+  public void Deserialize_InvalidType_ThrowsJsonException() {
+    // Arrange
+    var json = "[1, 2, 3]";
 
-    [Fact]
-    public void Serialize_Null_Serialized()
-    {
-        // Act
-        var json = JsonSerializer.Serialize((SemanticVersion)null!);
+    // Act & Assert
+    Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<SemanticVersion>(json, Options));
+  }
 
-        // Assert
-        Assert.Equal("null", json);
-
-        var actual = JsonSerializer.Deserialize<SemanticVersion>(json);
-
-        Assert.Null(actual);
-    }
-
-    public static TheoryData<SemanticVersion> ValidVersions()
-    {
-        return
-        [
-            new SemanticVersion([1, 2, 3, 4, 5], "", "Meta-3+1"),
+  public static TheoryData<SemanticVersion> ValidVersions() {
+    return
+    [
+        new SemanticVersion([1, 2, 3, 4, 5], "", "Meta-3+1"),
             new SemanticVersion([1, 2, 3, 4, 5], "RC-1", ""),
             new SemanticVersion([1, 2, 3, 4, 5], "RC-1", "Meta-3+1"),
             new SemanticVersion(1, 2, 3, 4),
@@ -56,6 +85,6 @@ public sealed class SemanticVersionJsonConverterTest
             new SemanticVersion([1], "RC-X", "Meta-3+1"),
             new SemanticVersion([1, 0, 5], "RC-X", "Meta-3+1"),
         ];
-    }
+  }
 }
 
