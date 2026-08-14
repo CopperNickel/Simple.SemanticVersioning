@@ -56,6 +56,7 @@ public sealed class SemanticVersionPrereleaseRankTest {
     "Ma",
     "x",
     " x",
-    "finalize"
+    "finalize",
+    "123"
   ];
 }
