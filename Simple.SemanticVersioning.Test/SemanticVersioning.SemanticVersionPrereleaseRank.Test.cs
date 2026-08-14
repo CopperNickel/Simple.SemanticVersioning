@@ -39,7 +39,7 @@ public sealed class SemanticVersionPrereleaseRankTest {
     Assert.Equal(SemanticVersionPrereleaseRank.Unknown, rank);
   }
 
-  public static TheoryData<string> KnownPrefixes => new() {
+  public static TheoryData<string> KnownPrefixes => [
     "dev",
     "alpha",
     "beta",
@@ -50,12 +50,12 @@ public sealed class SemanticVersionPrereleaseRankTest {
     "m+4",
     "rC178",
     "final"
-  };
+  ];
 
-  public static TheoryData<string> UnknownPrefixes => new() {
+  public static TheoryData<string> UnknownPrefixes => [
     "Ma",
     "x",
     " x",
     "finalize"
-  };
+  ];
 }
