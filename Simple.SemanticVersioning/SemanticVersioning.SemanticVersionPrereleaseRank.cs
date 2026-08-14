@@ -3,7 +3,9 @@
 /// <summary>
 /// Pre-release rank
 /// </summary>
-public sealed class SemanticVersionPrereleaseRank {
+public sealed class SemanticVersionPrereleaseRank 
+    : IEquatable<SemanticVersionPrereleaseRank>, 
+      IComparable<SemanticVersionPrereleaseRank> {
   #region Fields and Properties
 
   /// <summary>
@@ -16,8 +18,10 @@ public sealed class SemanticVersionPrereleaseRank {
   /// </summary>
   public static SemanticVersionPrereleaseRank Unknown { get; } = new("", "Unknown", 0);
 
-  // Collection of all known suffixes
-  private static readonly List<SemanticVersionPrereleaseRank> Suffixes = [
+  /// <summary>
+  /// Collection of all known suffixes 
+  /// </summary>
+  public static IReadOnlyList<SemanticVersionPrereleaseRank> Suffixes { get; } = [
       new("", "Release", 0),
         new("", "Unknown", -6),
 
@@ -122,6 +126,77 @@ public sealed class SemanticVersionPrereleaseRank {
   public override string ToString() => Description;
 
   #endregion Public Methods
+
+  #region IEquatable<SemanticVersionPrereleaseRank>
+
+  /// <summary>
+  /// Equals
+  /// </summary>
+  /// <param name="other">Rank to compare with</param>
+  /// <returns>True if ranks are equal, false otherwise</returns>
+  public bool Equals(SemanticVersionPrereleaseRank? other)
+  {
+      if (ReferenceEquals(this, other))
+          return true;
+
+      if (other is null)
+          return false;
+
+      return Rank == other.Rank && string.Equals(Description, other.Description, StringComparison.Ordinal);
+  }
+
+  /// <summary>
+  /// Equals
+  /// </summary>
+  /// <param name="obj">Object to compare with</param>
+  /// <returns>True if ranks are equal, false otherwise</returns>
+  public override bool Equals(object? obj) => (obj is SemanticVersionPrereleaseRank other) && Equals(other);
+
+  /// <summary>
+  /// Hash code
+  /// </summary>
+  /// <returns>Hash code</returns>
+  public override int GetHashCode() => HashCode.Combine(Rank, Description.GetHashCode(StringComparison.Ordinal));
+
+    #endregion IEquatable<SemanticVersionPrereleaseRank>
+
+  #region IComparable<SemanticVersionPrereleaseRank>
+
+  /// <summary>
+  /// Compare two rank instances
+  /// </summary>
+  /// <param name="left">Left instance</param>
+  /// <param name="right">Right instance</param>
+  /// <returns>-1 if left is less than right, 0 if left equals to right, +1 if left is more than right</returns>
+  public static int Compare(SemanticVersionPrereleaseRank? left, SemanticVersionPrereleaseRank? right)
+  {
+      if (ReferenceEquals(left, right))
+          return 0;
+      if (left is null)
+          return -1;
+      if (right is null)
+          return +1;
+
+      var result = left.Rank.CompareTo(right.Rank);
+
+      if (result != 0)
+          return result;
+
+      result = string.Compare(left.Description, right.Description, StringComparison.OrdinalIgnoreCase);
+
+      return result == 0
+          ? string.Compare(left.Description, right.Description, StringComparison.Ordinal)
+          : result;
+  }
+
+  /// <summary>
+  /// Compare two rank instances
+  /// </summary>
+  /// <param name="other">Other instance to compare with</param>
+  /// <returns>-1 if this is less than other, 0 if this equals to other, +1 if this is more than other</returns>
+  public int CompareTo(SemanticVersionPrereleaseRank? other) => Compare(this, other);
+
+  #endregion IComparable<SemanticVersionPrereleaseRank>
 }
 
 
