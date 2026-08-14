@@ -124,15 +124,31 @@ public sealed class SemanticVersion :
   /// Standard constructor
   /// </summary>
   /// <param name="parts"></param>
+  /// <param name="prerelease">Prerelease, if any</param>
+  /// <param name="metadata">Metadata, if any</param>
+  public SemanticVersion(IEnumerable<int> parts, string? prerelease, string? metadata)
+    : this(parts.Select(item => (long)item), prerelease, metadata) { }
+
+  /// <summary>
+  /// Standard constructor
+  /// </summary>
+  /// <param name="parts"></param>
   public SemanticVersion(params IEnumerable<long> parts)
-      : this(parts, null, null) { }
+    : this(parts, null, null) { }
+
+  /// <summary>
+  /// Standard constructor
+  /// </summary>
+  /// <param name="parts"></param>
+  public SemanticVersion(params IEnumerable<int> parts)
+    : this(parts.Select(item => (long)item), null, null) { }
 
   /// <summary>
   /// Standard constructor 
   /// </summary>
   /// <param name="version">Version</param>
   public SemanticVersion(Version version)
-      : this(version.Major, version.Minor, version.Build, version.Revision) { }
+    : this(version.Major, version.Minor, version.Build, version.Revision) { }
 
   #endregion Create
 
