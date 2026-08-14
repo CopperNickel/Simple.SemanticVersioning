@@ -331,40 +331,60 @@ public sealed class SemanticVersion :
 
     s = s.Trim();
 
-    var p = s.LastIndexOf('+');
+    var pPlus = s.IndexOf('+');
+    var pMinus = s.IndexOf('-');
+    var pMeta = pPlus;
+    var pPrerelease = -1;
+
+    if (pPlus < 0 || pPlus >= pMinus)
+    {
+        pPrerelease = pMinus;
+
+        if (pPrerelease >= 0)
+        {
+            pMeta = s[pPrerelease ..].IndexOf('+');
+
+            if (pMeta >= 0)
+                pMeta += pPrerelease;
+        }
+    }
 
     string? metadata = null;
     string? prerelease = null;
 
-    if (p > 0) {
-      metadata = s[(p + 1)..].ToString();
-
-      s = s[..p];
+    if (pMeta >= 0)
+    {
+      metadata = s[(pMeta + 1) .. ].ToString();
     }
 
-    p = s.LastIndexOf('-');
+    if (pPrerelease >= 0)
+    {
+      prerelease = pMeta >= 0
+        ? s.Slice(pPrerelease + 1, pMeta - pPrerelease - 1).ToString()
+        : s[(pPrerelease + 1) ..].ToString();
+    }
 
-    if (p > 0) {
-      prerelease = s[(p + 1)..].ToString();
-
-      s = s[..p];
+    if (pPrerelease >= 0 || pMeta >= 0)
+    {
+      s = s[.. Math.Min(pPrerelease < 0 ? int.MaxValue : pPrerelease, pMeta < 0 ? int.MaxValue : pMeta)];
     }
 
     using var en = s.Split('.');
 
     var parts = new List<long>(5);
 
-    while (en.MoveNext()) {
-      var span = s[en.Current.Start.Value..en.Current.End.Value];
+    while (en.MoveNext())
+    {
+        var span = s[en.Current.Start.Value..en.Current.End.Value];
 
-      if (long.TryParse(span, NumberStyles.Any, provider, out var part))
-        parts.Add(part);
-      else
-        return false;
+        if (long.TryParse(span, NumberStyles.Any, provider, out var part))
+            parts.Add(part);
+        else
+            return false;
     }
 
     if (parts.Count <= 0)
-      return false;
+        return false;
 
     result = new SemanticVersion(parts, prerelease, metadata);
 
