@@ -3,8 +3,8 @@
 /// <summary>
 /// Pre-release rank
 /// </summary>
-public sealed class SemanticVersionPrereleaseRank 
-    : IEquatable<SemanticVersionPrereleaseRank>, 
+public sealed class SemanticVersionPrereleaseRank
+    : IEquatable<SemanticVersionPrereleaseRank>,
       IComparable<SemanticVersionPrereleaseRank> {
   #region Fields and Properties
 
@@ -22,37 +22,33 @@ public sealed class SemanticVersionPrereleaseRank
   /// Collection of all known suffixes 
   /// </summary>
   public static IReadOnlyList<SemanticVersionPrereleaseRank> Suffixes { get; } = [
-      new("", "Release", 0),
-        new("", "Unknown", -6),
+    new("dev", "Development build, very unstable", -5),
+    new("a", "Alpha. Early, unstable, incomplete features", -4),
+    new("alpha", "Alpha. Early, unstable, incomplete features", -4),
 
-        new("dev", "Development build, very unstable", -5),
-        new("a", "Alpha. Early, unstable, incomplete features", -4),
-        new("alpha", "Alpha. Early, unstable, incomplete features", -4),
+    new("b", "Beta. Feature-complete-ish, still testing", -3),
+    new("beta", "Beta. Feature-complete-ish, still testing", -3),
 
-        new("b", "Beta. Feature-complete-ish, still testing", -3),
-        new("beta", "Beta. Feature-complete-ish, still testing", -3),
+    new("preview", "Preview", -2),
 
+    new("pre", "Prerelease", -2),
+    new("rc", "Release candidate", -1),
 
-        new("preview", "Preview", -2),
+    new("final", "Final", 0),
 
-        new("pre", "Prerelease", -2),
-        new("rc", "Release candidate", -1),
+    new("nightly", "Automated build from latest commit", -5),
+    new("canary", "Bleeding-edge, auto-published, higher risk than nightly", -6),
+    new("snapshot", "Automated build from latest commit", -5),
+    new("next", "Upcoming tag", -1),
+    new("exp", "Experimental", -2),
 
-        new("final", "Final", 0),
-
-        new("nightly", "Automated build from latest commit", -5),
-        new("canary", "Bleeding-edge, auto-published, higher risk than nightly", -6),
-        new("snapshot", "Automated build from latest commit", -5),
-        new("next", "Upcoming tag", -1),
-        new("exp", "Experimental", -2),
-
-        new("m", "Milestone", -3),
-        new("ea", "Early access", -1),
-        new("hotfix", "Hot fix", -1),
-        new("build", "Build as pre-release", -2),
-        new("test", "Test", -6),
-        new("qa", "Test QA", -6),
-    ];
+    new("m", "Milestone", -3),
+    new("ea", "Early access", -1),
+    new("hotfix", "Hot fix", -1),
+    new("build", "Build as pre-release", -2),
+    new("test", "Test", -6),
+    new("qa", "Test QA", -6),
+  ];
 
   /// <summary>
   /// Prefix
@@ -102,21 +98,12 @@ public sealed class SemanticVersionPrereleaseRank
     if (string.IsNullOrWhiteSpace(suffix))
       return Release;
 
-    suffix = suffix.Trim().TrimStart('-').TrimStart();
+    suffix = string.Concat(suffix.Trim().Where(char.IsLetter));
 
-    return Suffixes
-               .FirstOrDefault(item => IsMatch(item.Prefix, suffix))
-           ?? Unknown;
+    if (string.IsNullOrWhiteSpace(suffix))
+      return Unknown;
 
-    static bool IsMatch(string prefix, string text) {
-      if (prefix.Equals(text, StringComparison.OrdinalIgnoreCase))
-        return true;
-
-      if (!text.StartsWith(prefix))
-        return false;
-
-      return !char.IsLetter(text[prefix.Length]);
-    }
+    return Suffixes.FirstOrDefault(item => string.Equals(suffix, item.Prefix, StringComparison.OrdinalIgnoreCase)) ?? Unknown;
   }
 
   /// <summary>
@@ -134,15 +121,14 @@ public sealed class SemanticVersionPrereleaseRank
   /// </summary>
   /// <param name="other">Rank to compare with</param>
   /// <returns>True if ranks are equal, false otherwise</returns>
-  public bool Equals(SemanticVersionPrereleaseRank? other)
-  {
-      if (ReferenceEquals(this, other))
-          return true;
+  public bool Equals(SemanticVersionPrereleaseRank? other) {
+    if (ReferenceEquals(this, other))
+      return true;
 
-      if (other is null)
-          return false;
+    if (other is null)
+      return false;
 
-      return Rank == other.Rank && string.Equals(Description, other.Description, StringComparison.Ordinal);
+    return Rank == other.Rank && string.Equals(Description, other.Description, StringComparison.Ordinal);
   }
 
   /// <summary>
@@ -158,7 +144,7 @@ public sealed class SemanticVersionPrereleaseRank
   /// <returns>Hash code</returns>
   public override int GetHashCode() => HashCode.Combine(Rank, Description.GetHashCode(StringComparison.Ordinal));
 
-    #endregion IEquatable<SemanticVersionPrereleaseRank>
+  #endregion IEquatable<SemanticVersionPrereleaseRank>
 
   #region IComparable<SemanticVersionPrereleaseRank>
 
@@ -168,25 +154,24 @@ public sealed class SemanticVersionPrereleaseRank
   /// <param name="left">Left instance</param>
   /// <param name="right">Right instance</param>
   /// <returns>-1 if left is less than right, 0 if left equals to right, +1 if left is more than right</returns>
-  public static int Compare(SemanticVersionPrereleaseRank? left, SemanticVersionPrereleaseRank? right)
-  {
-      if (ReferenceEquals(left, right))
-          return 0;
-      if (left is null)
-          return -1;
-      if (right is null)
-          return +1;
+  public static int Compare(SemanticVersionPrereleaseRank? left, SemanticVersionPrereleaseRank? right) {
+    if (ReferenceEquals(left, right))
+      return 0;
+    if (left is null)
+      return -1;
+    if (right is null)
+      return +1;
 
-      var result = left.Rank.CompareTo(right.Rank);
+    var result = left.Rank.CompareTo(right.Rank);
 
-      if (result != 0)
-          return result;
+    if (result != 0)
+      return result;
 
-      result = string.Compare(left.Description, right.Description, StringComparison.OrdinalIgnoreCase);
+    result = string.Compare(left.Description, right.Description, StringComparison.OrdinalIgnoreCase);
 
-      return result == 0
-          ? string.Compare(left.Description, right.Description, StringComparison.Ordinal)
-          : result;
+    return result == 0
+        ? string.Compare(left.Description, right.Description, StringComparison.Ordinal)
+        : result;
   }
 
   /// <summary>
