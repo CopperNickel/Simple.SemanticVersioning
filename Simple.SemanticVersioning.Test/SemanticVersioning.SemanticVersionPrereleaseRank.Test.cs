@@ -39,6 +39,48 @@ public sealed class SemanticVersionPrereleaseRankTest {
     Assert.Equal(SemanticVersionPrereleaseRank.Unknown, rank);
   }
 
+  [Fact]
+  public void Compare_Compared() {
+    // Arrange
+    var ranks = SemanticVersionPrereleaseRank
+      .Ranks
+      .Append(SemanticVersionPrereleaseRank.Release)
+      .Append(SemanticVersionPrereleaseRank.Unknown)
+      .ToList();
+
+    // Act
+    var sorted = ranks
+      .OrderBy(x => x)
+      .ToList();
+
+    // Assert
+    var expected = ranks
+      .OrderBy(x => x.Rank)
+      .ThenBy(x => x.Prefix, StringComparer.OrdinalIgnoreCase)
+      .ToList();
+
+    Assert.Equal(expected, sorted);
+
+    Assert.True(sorted.SequenceEqual(expected));
+  }
+
+  [Fact]
+  public void ToString_ConvertedToString() {
+    // Arrange
+    var ranks = SemanticVersionPrereleaseRank
+      .Ranks
+      .Append(SemanticVersionPrereleaseRank.Release)
+      .Append(SemanticVersionPrereleaseRank.Unknown)
+      .ToList();
+
+    // Act
+    var result = ranks
+      .All(item => string.Equals(item.ToString(), item.Prefix));
+
+    // Assert
+    Assert.True(result);
+  }
+
   public static TheoryData<string> KnownPrefixes => [
     "dev",
     "alpha",

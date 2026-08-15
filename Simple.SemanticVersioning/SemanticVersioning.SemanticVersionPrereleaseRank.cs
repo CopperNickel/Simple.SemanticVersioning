@@ -21,7 +21,7 @@ public sealed class SemanticVersionPrereleaseRank
   /// <summary>
   /// Collection of all known suffixes 
   /// </summary>
-  public static IReadOnlyList<SemanticVersionPrereleaseRank> Suffixes { get; } = [
+  public static IReadOnlyList<SemanticVersionPrereleaseRank> Ranks { get; } = [
     new("dev", "Development build, very unstable", -5),
     new("a", "Alpha. Early, unstable, incomplete features", -4),
     new("alpha", "Alpha. Early, unstable, incomplete features", -4),
@@ -103,14 +103,14 @@ public sealed class SemanticVersionPrereleaseRank
     if (string.IsNullOrWhiteSpace(suffix))
       return Unknown;
 
-    return Suffixes.FirstOrDefault(item => string.Equals(suffix, item.Prefix, StringComparison.OrdinalIgnoreCase)) ?? Unknown;
+    return Ranks.FirstOrDefault(item => string.Equals(suffix, item.Prefix, StringComparison.OrdinalIgnoreCase)) ?? Unknown;
   }
 
   /// <summary>
   /// To String
   /// </summary>
   /// <returns>String representation</returns>
-  public override string ToString() => Description;
+  public override string ToString() => Prefix;
 
   #endregion Public Methods
 
@@ -167,10 +167,10 @@ public sealed class SemanticVersionPrereleaseRank
     if (result != 0)
       return result;
 
-    result = string.Compare(left.Description, right.Description, StringComparison.OrdinalIgnoreCase);
+    result = string.Compare(left.Prefix, right.Prefix, StringComparison.OrdinalIgnoreCase);
 
     return result == 0
-        ? string.Compare(left.Description, right.Description, StringComparison.Ordinal)
+        ? string.Compare(left.Prefix, right.Prefix, StringComparison.Ordinal)
         : result;
   }
 
