@@ -12,9 +12,12 @@
     <PackageProjectUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>SemanticVersion</PackageTags>
-    <PackageIcon>..\icon.png</PackageIcon>
-    <Authors>Dmitrii Bychenko</Authors>
+    <PackageTags>SemanticVersion;Version</PackageTags>
+    <PackageIcon>Icon.png</PackageIcon>
+<Authors>Dmitrii Bychenko</Authors>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Semantic version</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,5 +29,12 @@
     <WarningLevel>9999</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
