@@ -184,6 +184,38 @@ public sealed class SemanticVersionTest {
     Assert.False(Equals(left, wrongType));
   }
 
+  [Fact]
+  public void Zero_ZeroVersion()
+  {
+      // Act
+      var zero = SemanticVersion.Zero;
+
+      // Assert
+      Assert.True(zero.Parts.All(item => item == 0));
+
+      Assert.Empty(zero.Prerelease);
+
+      Assert.Empty(zero.Metadata);
+
+      Assert.False(zero.IsRelease);
+    }
+
+  [Theory]
+  [MemberData(nameof(ComparisonData))]
+  public void Compare_Compared((string? left, string? right, int compare) item)
+  {
+      // Arrange
+      var left = item.left is null ? null : SemanticVersion.Parse(item.left);
+      var right = item.right is null ? null : SemanticVersion.Parse(item.right);
+      var expected = item.compare;
+
+      // Act
+      var result = Math.Sign(SemanticVersion.Compare(left, right));
+
+      // Assert
+      Assert.Equal(expected, result);
+  }
+
   public static TheoryData<int[]> ValidVersions()
   {
       return [
@@ -201,6 +233,18 @@ public sealed class SemanticVersionTest {
           new [] {0, 0, 1, 2},
           new [] {0, 1, 2, 3},
           new [] {0, 0, 0, 4},
+      ];
+  }
+
+  public static TheoryData<(string? left, string? right, int compare)> ComparisonData()
+  {
+      return
+      [
+          ("1.0", "2.0", -1),
+          ("1.2", "2.1", -1),
+          ("1.2", "1.2.1", -1),
+          ("1.2", "1.2.1-rc", -1),
+          ("1.2", "1.2.1+rc", -1),
       ];
   }
 }
