@@ -81,6 +81,42 @@ public sealed class SemanticVersionPrereleaseRankTest {
     Assert.True(result);
   }
 
+  [Fact]
+  public void Equal_ValidImplementation()
+  {
+      // Arrange
+      var data = SemanticVersionPrereleaseRank
+          .Ranks
+          .Append(SemanticVersionPrereleaseRank.Release)
+          .Append(SemanticVersionPrereleaseRank.Unknown)
+          .ToList();
+
+      object otherObject = "Some Class";
+
+      // Act and assert
+      for (var i = 0; i < data.Count; ++i)
+      {
+          Assert.False(data[i].Equals(null));
+
+          Assert.Equal(0, data[i].CompareTo(data[i]));
+
+          Assert.Equal(-1, SemanticVersionPrereleaseRank.Compare(null, data[i]));
+          Assert.Equal(+1, SemanticVersionPrereleaseRank.Compare(data[i], null));
+
+          for (var j = i + 1; j < data.Count; ++j)
+          {
+              var other = (object)data[j];
+
+              Assert.False(data[i].Equals(other));
+              Assert.False(data[i].Equals(otherObject));
+
+              Assert.NotEqual(data[i], data[j]);
+              Assert.NotEqual(0, data[i].CompareTo(data[j]));
+              Assert.NotEqual(data[i].GetHashCode(), data[j].GetHashCode());
+          }
+      }
+  }
+
   public static TheoryData<string> KnownPrefixes => [
     "dev",
     "alpha",
