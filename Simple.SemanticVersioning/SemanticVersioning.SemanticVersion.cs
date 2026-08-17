@@ -237,45 +237,7 @@ public sealed class SemanticVersion :
   /// <param name="right">Right value to compare</param>
   /// <returns>+1, if left than right, -1 if left less than right, 0 if left equals to right</returns>
   public static int Compare(SemanticVersion? left, SemanticVersion? right) {
-    if (ReferenceEquals(left, right))
-      return 0;
-
-    if (left is null)
-      return -1;
-
-    if (right is null)
-      return +1;
-
-    for (var i = 0; i < Math.Max(left.m_Parts.Count, right.m_Parts.Count); ++i) {
-      var leftValue = i < left.m_Parts.Count ? left.m_Parts[i] : 0;
-      var rightValue = i < right.m_Parts.Count ? right.m_Parts[i] : 0;
-
-      if (leftValue != rightValue)
-        return leftValue < rightValue ? -1 : 1;
-    }
-
-    if (string.IsNullOrEmpty(left.Prerelease) && !string.IsNullOrEmpty(right.Prerelease))
-      return -1;
-
-    if (!string.IsNullOrEmpty(left.Prerelease) && string.IsNullOrEmpty(right.Prerelease))
-      return +1;
-
-    var result = StringComparer.OrdinalIgnoreCase.Compare(left.Prerelease, right.Prerelease);
-
-    if (result != 0)
-      return result;
-
-    result = StringComparer.Ordinal.Compare(left.Prerelease, right.Prerelease);
-
-    if (result != 0)
-      return result;
-
-    result = StringComparer.OrdinalIgnoreCase.Compare(left.Metadata, right.Metadata);
-
-    if (result != 0)
-      return result;
-
-    return StringComparer.Ordinal.Compare(left.Metadata, right.Metadata);
+    return SemanticVersioningComparer.VersionAll.Compare(left, right);
   }
 
   /// <summary>
