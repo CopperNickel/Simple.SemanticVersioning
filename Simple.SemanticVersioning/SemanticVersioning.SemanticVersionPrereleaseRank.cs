@@ -48,6 +48,7 @@ public sealed class SemanticVersionPrereleaseRank
     new("build", "Build as pre-release", -2),
     new("test", "Test", -6),
     new("qa", "Test QA", -6),
+    new("release", "Release version", 0),
   ];
 
   /// <summary>
@@ -68,7 +69,7 @@ public sealed class SemanticVersionPrereleaseRank
   /// <summary>
   /// Is Release
   /// </summary>
-  public bool IsRelease => ReferenceEquals(this, Release);
+  public bool IsRelease => ReferenceEquals(this, Release) || Rank == 0 && IsKnown;
 
   /// <summary>
   /// Is known

@@ -75,7 +75,7 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Is version a release version
   /// </summary>
-  public bool IsRelease => this[0] > 0 && string.IsNullOrWhiteSpace(Prerelease);
+  public bool IsRelease => this[0] > 0 && Rank.IsRelease;
 
   /// <summary>
   /// Prerelease rank

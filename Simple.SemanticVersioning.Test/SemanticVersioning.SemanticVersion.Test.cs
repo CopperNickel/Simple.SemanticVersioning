@@ -47,6 +47,30 @@ public sealed class SemanticVersionTest {
       Assert.Equal(origin.Revision, version.Revision);
   }
 
+
+  [Theory]
+  [InlineData("0.0", false)]
+  [InlineData("0.9", false)]
+  [InlineData("0.9+Release", false)]
+  [InlineData("0.9-Release", false)]
+
+  [InlineData("1.0-alpha", false)]
+  [InlineData("1.9-beta+Release", false)]
+  [InlineData("1.9+Release", true)]
+  [InlineData("1.9-Release", true)]
+  [InlineData("1.0-Unknown", false)]
+  public void IsRelease_ReleaseWhenNotPrerelease(string version, bool isRelease)
+  {
+    // Arrange
+    var ver = SemanticVersion.Parse(version);
+
+    // Act
+    var actual = ver.IsRelease;
+
+    // Assert
+    Assert.Equal(isRelease, actual);
+  }
+
   public static TheoryData<int[]> ValidVersions()
   {
       return [
