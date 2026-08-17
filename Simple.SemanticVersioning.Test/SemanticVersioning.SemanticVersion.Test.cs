@@ -92,9 +92,8 @@ public sealed class SemanticVersionTest {
      // Assert
      Assert.Contains("Negative", error.Message);
   }
-
-
-      [Theory]
+    
+  [Theory]
   [InlineData("0.0", false)]
   [InlineData("0.9", false)]
   [InlineData("0.9+Release", false)]
@@ -115,6 +114,74 @@ public sealed class SemanticVersionTest {
 
     // Assert
     Assert.Equal(isRelease, actual);
+  }
+
+  [Theory]
+  [InlineData("", "1.20.30.123456.9-beta+test")]
+  [InlineData("x", "1.14.1e.1e240.9-beta+test")]
+  [InlineData("d3", "001.020.030.123456.009-beta+test")]
+  public void ToString_Represented(string format, string expected)
+  {
+     // Arrange
+     var version = new SemanticVersion([1, 20, 30, 123456, 9], "beta", "test");
+
+     // Act
+     var result = version.ToString(format);
+
+     // Assert
+     Assert.Equal(expected, result);
+  }
+
+  [Theory]
+  [InlineData("1", "1", true)]
+  [InlineData("1.0", "1.0", true)]
+  [InlineData("1.1.0.0", "1.1.0.1", false)]
+  [InlineData("1.1.0.1", "1.1.0.0", false)]
+  [InlineData("1.1", "1.1.0.0", true)]
+  [InlineData("2.0", "1.0", false)]
+  [InlineData("2.0+a", "2.0+b", false)]
+  [InlineData("2.0-a", "2.0-b", false)]
+  [InlineData("2.0-a+b", "2.0-b+a", false)]
+  [InlineData("2.1", "1.2", false)]
+  [InlineData("2.1.3.5.6", "2.1.3.5.7", false)]
+  [InlineData("2.01.3.4.0.0-Alpha+Test", "2.1.03.4-Alpha+Test", true)]
+  [InlineData("2.01.3.4.0.0-Beta", "2.1.03.4-BETA", false)]
+  [InlineData("2.01.3.4.0.0+Test", "2.1.03.4+test", false)]
+  [InlineData("2.01.3.4.0.0-BeTa+Test", "2.1.03.4-BETA+test", false)]
+  public void Equals_Computed(string leftText, string rightText, bool expected)
+  { 
+    // Arrange
+    var left = SemanticVersion.Parse(leftText);
+
+    var right = SemanticVersion.Parse(rightText);
+
+    // Act
+    var actual = Equals(left, right);
+
+    // Assert
+    Assert.Equal(expected, actual);
+  }
+
+  [Fact]
+  public void Equals_SpecialCases_Equals()
+  {
+    // Arrange
+    var left = new SemanticVersion([1, 2, 5, 97, 3, 789], "beta", "test");
+
+    var right = left;
+    var obj = (object)right;
+    var wrongType = (object)"WrongType";
+
+    // Act and assert
+    Assert.True(Equals(left, right));
+    Assert.True(Equals(left, obj));
+    Assert.False(Equals(null, right));
+
+    Assert.False(Equals(left, null));
+
+    Assert.False(left.Equals(null));
+
+    Assert.False(Equals(left, wrongType));
   }
 
   public static TheoryData<int[]> ValidVersions()
