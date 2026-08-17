@@ -1,4 +1,6 @@
-﻿namespace Simple.SemanticVersioning.Test;
+﻿using System.Globalization;
+
+namespace Simple.SemanticVersioning.Test;
 
 public sealed class SemanticVersionTest {
 
@@ -47,8 +49,52 @@ public sealed class SemanticVersionTest {
       Assert.Equal(origin.Revision, version.Revision);
   }
 
+  [Theory]
+  [MemberData(nameof(ValidVersions))]
+  public void Create_VersionsInLong_Created(int[] intItems)
+  {
+      // Arrange
+      var items = intItems.Select(item => (long)item).ToArray();
+
+      var origin = new Version(
+          intItems.ElementAtOrDefault(0),
+          intItems.ElementAtOrDefault(1),
+          intItems.ElementAtOrDefault(2),
+          intItems.ElementAtOrDefault(3));
+
+      // Act
+      var version = new SemanticVersion(items);
+
+      // Assert
+      Assert.Equal(origin.Major, version.Major);
+      Assert.Equal(origin.Minor, version.Minor);
+      Assert.Equal(origin.Build, version.Patch);
+      Assert.Equal(origin.Revision, version.Revision);
+    }
 
   [Theory]
+  [InlineData("-1.0.0")]
+  [InlineData("0.-1.0")]
+  [InlineData("0.0.-1")]
+  [InlineData("0.0.0.-1")]
+  [InlineData("0.0.0.0.-1")]
+  public void Create_negativeParts_Exception(string text)
+  {
+     // Arrange
+     var parts = text
+         .Split('.')
+         .Select(item => int.Parse(item, NumberStyles.Any, CultureInfo.InvariantCulture))
+         .ToList();
+
+     // Act
+     var error = Assert.Throws<ArgumentException>(() => new SemanticVersion(parts));
+
+     // Assert
+     Assert.Contains("Negative", error.Message);
+  }
+
+
+      [Theory]
   [InlineData("0.0", false)]
   [InlineData("0.9", false)]
   [InlineData("0.9+Release", false)]
