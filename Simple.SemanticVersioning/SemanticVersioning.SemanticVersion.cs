@@ -60,8 +60,8 @@ public sealed class SemanticVersion :
   /// </summary>
   public string Prerelease {
     get;
-    set {
-      field = value;
+    private init {
+      field = value ?? "";
 
       Rank = SemanticVersionPrereleaseRank.Find(field);
     }
