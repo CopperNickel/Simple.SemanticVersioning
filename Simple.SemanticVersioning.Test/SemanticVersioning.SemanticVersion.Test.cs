@@ -29,6 +29,27 @@ public sealed class SemanticVersionTest {
   }
 
   [Fact]
+  public void CreateCopy_Created() {
+    // Arrange
+    var origin = new SemanticVersion([1, 2, 3, 4], "alpha", "test");
+
+    // Act
+    var version = new SemanticVersion(origin);
+
+    // Assert
+    Assert.Equal(origin, version);
+  }
+
+  [Fact]
+  public void CreateCopy_Null_Exception() {
+    // Arrange
+    SemanticVersion origin = null!;
+
+    // Act and Assert
+    Assert.Throws<ArgumentNullException>(() => new SemanticVersion(origin));
+  }
+
+  [Fact]
   public void Create_WithInit_Created() {
     // Arrange and Act
     var version = new SemanticVersion([1, 2, 3, 4]) {

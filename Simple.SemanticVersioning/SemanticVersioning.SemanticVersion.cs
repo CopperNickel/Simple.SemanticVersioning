@@ -179,6 +179,18 @@ public sealed class SemanticVersion :
     : this(parts.Select(item => (long)item), null, null) { }
 
   /// <summary>
+  /// Constructor from another semantic version (constructor copy)
+  /// </summary>
+  /// <param name="origin">Original semantic version</param>
+  public SemanticVersion(SemanticVersion origin) {
+    ArgumentNullException.ThrowIfNull(origin);
+
+    m_Parts = [.. origin.m_Parts];
+    Prerelease = origin.Prerelease;
+    Metadata = origin.Metadata;
+  }
+
+  /// <summary>
   /// Standard constructor 
   /// </summary>
   /// <param name="version">Version</param>
