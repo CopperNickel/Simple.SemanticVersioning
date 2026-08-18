@@ -33,34 +33,64 @@ public sealed class SemanticVersion :
   /// <returns>Version part or 0</returns>
   public long this[int index] {
     get => index >= 0 && index < m_Parts.Count ? m_Parts[index] : 0;
+    private set {
+      ArgumentOutOfRangeException.ThrowIfNegative(index);
+      ArgumentOutOfRangeException.ThrowIfNegative(value);
+
+      if (index < m_Parts.Count) {
+        m_Parts[index] = value;
+
+        if (value == 0 && index == m_Parts.Count - 1) {
+          for (var i = m_Parts.Count - 1; i >= 0 && m_Parts[i] == 0; --i)
+            m_Parts.RemoveAt(i);
+        }
+      }
+      else if (value > 0) {
+        m_Parts.AddRange(Enumerable.Repeat(0L, index - m_Parts.Count));
+
+        m_Parts.Add(value);
+      }
+    }
   }
 
   /// <summary>
   /// Major
   /// </summary>
-  public long Major => this[0];
+  public long Major {
+    get => this[0];
+    init => this[0] = value;
+  }
 
   /// <summary>
   /// Minor
   /// </summary>
-  public long Minor => this[1];
+  public long Minor {
+    get => this[1];
+    init => this[1] = value;
+  }
 
   /// <summary>
   /// Patch
   /// </summary>
-  public long Patch => this[2];
+  public long Patch {
+    get => this[2];
+    init => this[2] = value;
+  }
 
   /// <summary>
   /// Revision
   /// </summary>
-  public long Revision => this[3];
+  public long Revision {
+    get => this[3];
+    init => this[3] = value;
+  }
 
   /// <summary>
   /// Prerelease
   /// </summary>
   public string Prerelease {
     get;
-    private init {
+    init {
       field = value ?? "";
 
       Rank = SemanticVersionPrereleaseRank.Find(field);
@@ -70,7 +100,12 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Metadata
   /// </summary>
-  public string Metadata { get; }
+  public string Metadata {
+    get;
+    init {
+      field = value ?? "";
+    }
+  }
 
   /// <summary>
   /// Is version a release version

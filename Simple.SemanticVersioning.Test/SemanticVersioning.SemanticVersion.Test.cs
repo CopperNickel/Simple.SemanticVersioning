@@ -29,6 +29,49 @@ public sealed class SemanticVersionTest {
   }
 
   [Fact]
+  public void Create_WithInit_Created() {
+    // Arrange and Act
+    var version = new SemanticVersion([1, 2, 3, 4]) {
+      Prerelease = "alpha",
+      Metadata = "test",
+      Major = 9,
+      Minor = 7,
+      Patch = 5,
+      Revision = 0
+    };
+
+    // Assert
+    Assert.Equal("9.7.5-alpha+test", version.ToString());
+  }
+
+  [Fact]
+  public void Create_WithInitAndNull_Created() {
+    // Arrange and Act
+    var version = new SemanticVersion([1, 2, 3, 4], "alpha", "test") {
+      Prerelease = null!,
+      Metadata = null!,
+      Major = 9,
+      Minor = 7,
+      Patch = 0,
+      Revision = 0
+    };
+
+    // Assert
+    Assert.Equal("9.7", version.ToString());
+  }
+
+  [Fact]
+  public void Create_WithInitAndShortVersion_Created() {
+    // Arrange and Act
+    var version = new SemanticVersion([1, 2], "alpha", "test") {
+      Revision = 11
+    };
+
+    // Assert
+    Assert.Equal("1.2.0.11-alpha+test", version.ToString());
+  }
+
+  [Fact]
   public void Create_VeryLargeVersionNumbers_Accepted() {
     // Act
     var version = new SemanticVersion([long.MaxValue, long.MaxValue, long.MaxValue]);
