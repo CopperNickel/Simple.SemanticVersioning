@@ -194,6 +194,13 @@ public sealed class SemanticVersioningComparerTest {
 
         Assert.Equal(actual == 0, equals);
         Assert.Equal(actual == 0, leftHash == rightHash);
+
+        Assert.Equal(actual < 0, versionLeft < versionRight);
+        Assert.Equal(actual <= 0, versionLeft <= versionRight);
+        Assert.Equal(actual == 0, versionLeft == versionRight);
+        Assert.Equal(actual != 0, versionLeft != versionRight);
+        Assert.Equal(actual >= 0, versionLeft >= versionRight);
+        Assert.Equal(actual > 0, versionLeft > versionRight);
     }
 
     [Theory]
@@ -224,6 +231,7 @@ public sealed class SemanticVersioningComparerTest {
     {
         return [
             ("1.5.9", "1.5.9", 0),
+            ("2.0.0", "1.99.0", 1),
             ("1.0.0", "1.1.0", -1),
             ("1.0.0", "1.0.2", -1),
             ("1.8.7-a", "1.8.7", 0),
@@ -244,6 +252,7 @@ public sealed class SemanticVersioningComparerTest {
     {
         return [
             ("1.5.9", "1.5.9", 0),
+            ("2.0.0", "1.99.0", 1),
             ("1.0.0", "1.1.0", -1),
             ("1.0.0", "1.0.2", -1),
             ("1.8.7-a", "1.8.7", -1),
@@ -264,6 +273,7 @@ public sealed class SemanticVersioningComparerTest {
     {
         return [
             ("1.5.9", "1.5.9", 0),
+            ("2.0.0", "1.99.0", 1),
             ("1.0.0", "1.1.0", -1),
             ("1.0.0", "1.0.2", -1),
             ("1.8.7-a", "1.8.7", -1),
@@ -285,6 +295,7 @@ public sealed class SemanticVersioningComparerTest {
         return [
             ("1.5.9", "1.5.9", 0),
             ("1.0.0", "1.1.0", -1),
+            ("2.0.0", "1.99.0", 1),
             ("1.0.0", "1.0.2", -1),
             ("1.8.7-a", "1.8.7", -1),
             ("1.5.6+a", "1.5.6", 1),
@@ -305,6 +316,7 @@ public sealed class SemanticVersioningComparerTest {
     {
         return [
             ("1.5.9", "1.5.9", 0),
+            ("2.0.0", "1.99.0", 1),
             ("1.0.0", "1.1.0", -1),
             ("1.0.0", "1.0.2", -1),
             ("1.8.7-a", "1.8.7", +1),
