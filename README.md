@@ -53,6 +53,21 @@ Console.WriteLine(version.Prerelease);   // alpha.1
 Console.WriteLine(version.Metadata);     // build.123
 ```
 
+### Updating a Version
+
+```csharp
+
+using Simple.SemanticVersioning;
+
+var originalVersion = new SemanticVersion([ 1, 2, 3 ], "alpha.1", "build.123");
+
+// Since SemanticVersion is immutable we should use constructor copy
+var modifiedVersion = new SemanticVersion(originalVersion) {
+  Revision = originalVersion.Revision + 1,
+  Prerelease = "beta.2"
+}; 
+```
+
 ### Parsing Versions
 
 ```csharp
