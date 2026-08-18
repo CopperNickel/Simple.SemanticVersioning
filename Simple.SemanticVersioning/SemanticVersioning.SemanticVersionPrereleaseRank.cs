@@ -22,7 +22,7 @@ public sealed class SemanticVersionPrereleaseRank
   /// Collection of all known suffixes 
   /// </summary>
   public static IReadOnlyList<SemanticVersionPrereleaseRank> Ranks { get; } = [
-    new("dev", "Development build, very unstable", -5),
+    new("dev", "Development build, very unstable", -7),
     new("a", "Alpha. Early, unstable, incomplete features", -4),
     new("alpha", "Alpha. Early, unstable, incomplete features", -4),
 
@@ -46,8 +46,8 @@ public sealed class SemanticVersionPrereleaseRank
     new("ea", "Early access", -1),
     new("hotfix", "Hot fix", -1),
     new("build", "Build as pre-release", -2),
-    new("test", "Test", -6),
-    new("qa", "Test QA", -6),
+    new("test", "Test", -5),
+    new("qa", "Test QA", -5),
     new("release", "Release version", 0),
   ];
 
