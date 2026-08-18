@@ -42,11 +42,13 @@ public sealed class SemanticVersionJsonConverterTest {
     var invalidVersion = "\"invalid\"";
 
     // Act & Assert
-    Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<SemanticVersion>(invalidVersion, Options));
+    var error = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<SemanticVersion>(invalidVersion, Options));
+
+    Assert.Contains("semantic", error.Message, StringComparison.OrdinalIgnoreCase);
   }
 
   [Fact]
-  public void Serilize_AsDictionary_Serialized() {
+  public void Serialize_AsDictionary_Serialized() {
     // Arrange
     var dict = new Dictionary<SemanticVersion, int> {
       { new SemanticVersion(1, 2, 3), 42 }
@@ -67,7 +69,9 @@ public sealed class SemanticVersionJsonConverterTest {
     var json = "[1, 2, 3]";
 
     // Act & Assert
-    Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<SemanticVersion>(json, Options));
+    var error = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<SemanticVersion>(json, Options));
+
+    Assert.Contains(nameof(SemanticVersion), error.Message);
   }
 
   public static TheoryData<SemanticVersion> ValidVersions() {

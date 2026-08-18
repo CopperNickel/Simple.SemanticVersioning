@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Xml.Serialization;
 
 namespace Simple.SemanticVersioning.Test;
 
@@ -216,6 +217,52 @@ public sealed class SemanticVersionTest {
       Assert.Equal(expected, result);
   }
 
+  [Theory]
+  [MemberData(nameof(ValidVersionsToParse))]
+  public void TryParse_ValidText_Parsed(string text)
+  {
+    // Act
+    var result1 = SemanticVersion.TryParse(text, out var version1);
+
+    var result2 = SemanticVersion.TryParse(text.AsSpan(), out var version2);
+
+    var version3 = SemanticVersion.Parse(text);
+
+    var version4 = SemanticVersion.Parse(text.AsSpan());
+
+    // Assert
+    Assert.True(result1);
+    Assert.True(result2);
+
+    Assert.Equal(version1, version2);
+    Assert.Equal(version2, version3);
+    Assert.Equal(version3, version4);
+  }
+
+  [Theory]
+  [MemberData(nameof(InvalidVersionsToParse))]
+  public void TryParse_ValidText_FailedToParse(string? text)
+  {
+        // Act
+        var result1 = SemanticVersion.TryParse(text, out var version1);
+
+        var result2 = SemanticVersion.TryParse(text.AsSpan(), out var version2);
+
+        var error1 = Assert.Throws<FormatException>(() => SemanticVersion.Parse(text));
+
+        var error2 = Assert.Throws<FormatException>(() => SemanticVersion.Parse(text.AsSpan()));
+
+        // Assert
+        Assert.False(result1);
+        Assert.False(result2);
+
+        Assert.Null(version1);
+        Assert.Null(version2);
+
+        Assert.Contains("parsed", error1.Message);
+        Assert.Contains("parsed", error2.Message);
+    }
+
   public static TheoryData<int[]> ValidVersions()
   {
       return [
@@ -245,6 +292,38 @@ public sealed class SemanticVersionTest {
           ("1.2", "1.2.1", -1),
           ("1.2", "1.2.1-rc", -1),
           ("1.2", "1.2.1+rc", -1),
+      ];
+  }
+
+  public static TheoryData<string> ValidVersionsToParse()
+  {
+      return [
+          "1",
+          "1.2",
+          "51.253.63.2",
+          "51.253.63.2.6336.363",
+          "51.253-zeta",
+          "51.253-zeta+theta",
+          "51.253+theta",
+          "51.253.63.2.6336.363-alpha2-7+fita-23+789",
+          "version 1.23.4566.36-a+b",
+          "ver 1.23.4566.36-a+b",
+          "v 1.23.4566.36-a+b",
+      ];
+  }
+
+  public static TheoryData<string?> InvalidVersionsToParse()
+  {
+      return [
+          null!,
+          "",
+          "   ",
+          "-1.23.45",
+          "a.b.c",
+          "78.-123.65",
+          "version -1.23.4566.36-a+b",
+          "ver 1.-23.4566.36-a+b",
+          "v 1.23.-4566.36-a+b",
       ];
   }
 }
