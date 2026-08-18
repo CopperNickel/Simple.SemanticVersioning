@@ -237,6 +237,13 @@ public sealed class SemanticVersionTest {
     Assert.Equal(version1, version2);
     Assert.Equal(version2, version3);
     Assert.Equal(version3, version4);
+
+    var expectedText = string.Concat(text.SkipWhile(c => c < '0' || c > '9')).Trim();
+
+    if (!expectedText.Contains('.'))
+        expectedText += ".0";
+
+    Assert.Equal(expectedText, version1!.ToString());
   }
 
   [Theory]
