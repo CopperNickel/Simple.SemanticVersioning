@@ -98,7 +98,7 @@ int result = v1.CompareTo(v3);  // -1 (v1 is less than v3)
 The library automatically recognizes and ranks common prerelease identifiers:
 
 ```csharp
-var version = new SemanticVersion(new[] { 1L, 0L, 0L }, "alpha.1", null);
+var version = new SemanticVersion([1, 0, 0], "alpha.1");
 
 Console.WriteLine(version.Rank.Name);        // Alpha. Early, unstable, incomplete features
 Console.WriteLine(version.Rank.Suffix);     // a or alpha
@@ -106,14 +106,14 @@ Console.WriteLine(version.Rank.Level);      // -4 (lower levels = earlier in dev
 Console.WriteLine(version.IsRelease);       // false
 ```
 
-**Supported Prerelease Ranks** (from most stable to least):
-- **Development**: `dev`, `nightly`, `snapshot` (Level: -5)
-- **Experimental**: `exp` (Level: -2)
+**Supported Prerelease Ranks** (from least stable to most):
+- **Development**: `dev`, `nightly`, `snapshot` (Level: -7)
 - **Canary**: `canary` (Level: -6)
-- **Test/QA**: `test`, `qa` (Level: -6)
+- **Test/QA**: `test`, `qa` (Level: -5)
 - **Alpha**: `a`, `alpha` (Level: -4)
 - **Milestone**: `m` (Level: -3)
 - **Beta**: `b`, `beta` (Level: -3)
+- **Experimental**: `exp` (Level: -2)
 - **Preview**: `preview` (Level: -2)
 - **Build**: `build` (Level: -2)
 - **Prerelease**: `pre` (Level: -2)
@@ -129,7 +129,7 @@ Console.WriteLine(version.IsRelease);       // false
 ```csharp
 using System.Text.Json;
 
-var version = new SemanticVersion(new[] { 1L, 2L, 3L }, "alpha", null);
+var version = new SemanticVersion([1, 2, 3], "alpha");
 
 // Serialize to JSON
 string json = JsonSerializer.Serialize(version);
