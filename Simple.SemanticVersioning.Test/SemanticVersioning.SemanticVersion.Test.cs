@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Xml.Serialization;
 
 namespace Simple.SemanticVersioning.Test;
 
@@ -31,8 +30,7 @@ public sealed class SemanticVersionTest {
 
   [Theory]
   [MemberData(nameof(ValidVersions))]
-  public void Create_Versions_Created(int[] items)
-  {
+  public void Create_Versions_Created(int[] items) {
     // Arrange
     var origin = new Version(
   items.ElementAtOrDefault(0),
@@ -40,38 +38,37 @@ public sealed class SemanticVersionTest {
         items.ElementAtOrDefault(2),
         items.ElementAtOrDefault(3));
 
-      // Act
-      var version = new SemanticVersion(origin);
+    // Act
+    var version = new SemanticVersion(origin);
 
-      // Assert
-      Assert.Equal(origin.Major, version.Major);
-      Assert.Equal(origin.Minor, version.Minor);
-      Assert.Equal(origin.Build, version.Patch);
-      Assert.Equal(origin.Revision, version.Revision);
+    // Assert
+    Assert.Equal(origin.Major, version.Major);
+    Assert.Equal(origin.Minor, version.Minor);
+    Assert.Equal(origin.Build, version.Patch);
+    Assert.Equal(origin.Revision, version.Revision);
   }
 
   [Theory]
   [MemberData(nameof(ValidVersions))]
-  public void Create_VersionsInLong_Created(int[] intItems)
-  {
-      // Arrange
-      var items = intItems.Select(item => (long)item).ToArray();
+  public void Create_VersionsInLong_Created(int[] intItems) {
+    // Arrange
+    var items = intItems.Select(item => (long)item).ToArray();
 
-      var origin = new Version(
-          intItems.ElementAtOrDefault(0),
-          intItems.ElementAtOrDefault(1),
-          intItems.ElementAtOrDefault(2),
-          intItems.ElementAtOrDefault(3));
+    var origin = new Version(
+        intItems.ElementAtOrDefault(0),
+        intItems.ElementAtOrDefault(1),
+        intItems.ElementAtOrDefault(2),
+        intItems.ElementAtOrDefault(3));
 
-      // Act
-      var version = new SemanticVersion(items);
+    // Act
+    var version = new SemanticVersion(items);
 
-      // Assert
-      Assert.Equal(origin.Major, version.Major);
-      Assert.Equal(origin.Minor, version.Minor);
-      Assert.Equal(origin.Build, version.Patch);
-      Assert.Equal(origin.Revision, version.Revision);
-    }
+    // Assert
+    Assert.Equal(origin.Major, version.Major);
+    Assert.Equal(origin.Minor, version.Minor);
+    Assert.Equal(origin.Build, version.Patch);
+    Assert.Equal(origin.Revision, version.Revision);
+  }
 
   [Theory]
   [InlineData("-1.0.0")]
@@ -79,21 +76,20 @@ public sealed class SemanticVersionTest {
   [InlineData("0.0.-1")]
   [InlineData("0.0.0.-1")]
   [InlineData("0.0.0.0.-1")]
-  public void Create_negativeParts_Exception(string text)
-  {
-     // Arrange
-     var parts = text
-         .Split('.')
-         .Select(item => int.Parse(item, NumberStyles.Any, CultureInfo.InvariantCulture))
-         .ToList();
+  public void Create_negativeParts_Exception(string text) {
+    // Arrange
+    var parts = text
+        .Split('.')
+        .Select(item => int.Parse(item, NumberStyles.Any, CultureInfo.InvariantCulture))
+        .ToList();
 
-     // Act
-     var error = Assert.Throws<ArgumentException>(() => new SemanticVersion(parts));
+    // Act
+    var error = Assert.Throws<ArgumentException>(() => new SemanticVersion(parts));
 
-     // Assert
-     Assert.Contains("Negative", error.Message);
+    // Assert
+    Assert.Contains("Negative", error.Message);
   }
-    
+
   [Theory]
   [InlineData("0.0", false)]
   [InlineData("0.9", false)]
@@ -105,8 +101,7 @@ public sealed class SemanticVersionTest {
   [InlineData("1.9+Release", true)]
   [InlineData("1.9-Release", true)]
   [InlineData("1.0-Unknown", false)]
-  public void IsRelease_ReleaseWhenNotPrerelease(string version, bool isRelease)
-  {
+  public void IsRelease_ReleaseWhenNotPrerelease(string version, bool isRelease) {
     // Arrange
     var ver = SemanticVersion.Parse(version);
 
@@ -121,16 +116,15 @@ public sealed class SemanticVersionTest {
   [InlineData("", "1.20.30.123456.9-beta+test")]
   [InlineData("x", "1.14.1e.1e240.9-beta+test")]
   [InlineData("d3", "001.020.030.123456.009-beta+test")]
-  public void ToString_Represented(string format, string expected)
-  {
-     // Arrange
-     var version = new SemanticVersion([1, 20, 30, 123456, 9], "beta", "test");
+  public void ToString_Represented(string format, string expected) {
+    // Arrange
+    var version = new SemanticVersion([1, 20, 30, 123456, 9], "beta", "test");
 
-     // Act
-     var result = version.ToString(format);
+    // Act
+    var result = version.ToString(format);
 
-     // Assert
-     Assert.Equal(expected, result);
+    // Assert
+    Assert.Equal(expected, result);
   }
 
   [Theory]
@@ -149,8 +143,7 @@ public sealed class SemanticVersionTest {
   [InlineData("2.01.3.4.0.0-Beta", "2.1.03.4-BETA", false)]
   [InlineData("2.01.3.4.0.0+Test", "2.1.03.4+test", false)]
   [InlineData("2.01.3.4.0.0-BeTa+Test", "2.1.03.4-BETA+test", false)]
-  public void Equals_Computed(string leftText, string rightText, bool expected)
-  { 
+  public void Equals_Computed(string leftText, string rightText, bool expected) {
     // Arrange
     var left = SemanticVersion.Parse(leftText);
 
@@ -164,8 +157,7 @@ public sealed class SemanticVersionTest {
   }
 
   [Fact]
-  public void Equals_SpecialCases_Equals()
-  {
+  public void Equals_SpecialCases_Equals() {
     // Arrange
     var left = new SemanticVersion([1, 2, 5, 97, 3, 789], "beta", "test");
 
@@ -186,41 +178,38 @@ public sealed class SemanticVersionTest {
   }
 
   [Fact]
-  public void Zero_ZeroVersion()
-  {
-      // Act
-      var zero = SemanticVersion.Zero;
+  public void Zero_ZeroVersion() {
+    // Act
+    var zero = SemanticVersion.Zero;
 
-      // Assert
-      Assert.True(zero.Parts.All(item => item == 0));
+    // Assert
+    Assert.True(zero.Parts.All(item => item == 0));
 
-      Assert.Empty(zero.Prerelease);
+    Assert.Empty(zero.Prerelease);
 
-      Assert.Empty(zero.Metadata);
+    Assert.Empty(zero.Metadata);
 
-      Assert.False(zero.IsRelease);
-    }
+    Assert.False(zero.IsRelease);
+  }
 
   [Theory]
   [MemberData(nameof(ComparisonData))]
-  public void Compare_Compared((string? left, string? right, int compare) item)
-  {
-      // Arrange
-      var left = item.left is null ? null : SemanticVersion.Parse(item.left);
-      var right = item.right is null ? null : SemanticVersion.Parse(item.right);
-      var expected = item.compare;
+  public void Compare_Compared((string? left, string? right, int compare) item) {
+    // Arrange
+    var left = item.left is null ? null : SemanticVersion.Parse(item.left);
+    var right = item.right is null ? null : SemanticVersion.Parse(item.right);
+    var expected = item.compare;
 
-      // Act
-      var result = Math.Sign(SemanticVersion.Compare(left, right));
+    // Act
+    var result = Math.Sign(SemanticVersion.Compare(left, right));
 
-      // Assert
-      Assert.Equal(expected, result);
+    // Assert
+    Assert.Equal(expected, result);
   }
 
   [Theory]
   [MemberData(nameof(ValidVersionsToParse))]
-  public void TryParse_ValidText_Parsed(string text)
-  {
+  public void TryParse_ValidText_Parsed(string text) {
     // Act
     var result1 = SemanticVersion.TryParse(text, out var version1);
 
@@ -241,39 +230,37 @@ public sealed class SemanticVersionTest {
     var expectedText = string.Concat(text.SkipWhile(c => c < '0' || c > '9')).Trim();
 
     if (!expectedText.Contains('.'))
-        expectedText += ".0";
+      expectedText += ".0";
 
     Assert.Equal(expectedText, version1!.ToString());
   }
 
   [Theory]
   [MemberData(nameof(InvalidVersionsToParse))]
-  public void TryParse_ValidText_FailedToParse(string? text)
-  {
-        // Act
-        var result1 = SemanticVersion.TryParse(text, out var version1);
+  public void TryParse_ValidText_FailedToParse(string? text) {
+    // Act
+    var result1 = SemanticVersion.TryParse(text, out var version1);
 
-        var result2 = SemanticVersion.TryParse(text.AsSpan(), out var version2);
+    var result2 = SemanticVersion.TryParse(text.AsSpan(), out var version2);
 
-        var error1 = Assert.Throws<FormatException>(() => SemanticVersion.Parse(text));
+    var error1 = Assert.Throws<FormatException>(() => SemanticVersion.Parse(text));
 
-        var error2 = Assert.Throws<FormatException>(() => SemanticVersion.Parse(text.AsSpan()));
+    var error2 = Assert.Throws<FormatException>(() => SemanticVersion.Parse(text.AsSpan()));
 
-        // Assert
-        Assert.False(result1);
-        Assert.False(result2);
+    // Assert
+    Assert.False(result1);
+    Assert.False(result2);
 
-        Assert.Null(version1);
-        Assert.Null(version2);
+    Assert.Null(version1);
+    Assert.Null(version2);
 
-        Assert.Contains("parsed", error1.Message);
-        Assert.Contains("parsed", error2.Message);
-    }
+    Assert.Contains("parsed", error1.Message);
+    Assert.Contains("parsed", error2.Message);
+  }
 
-  public static TheoryData<int[]> ValidVersions()
-  {
-      return [
-          new [] {0},
+  public static TheoryData<int[]> ValidVersions() {
+    return [
+        new [] {0},
           new [] {1},
           new [] {1, 2},
           new [] {1, 2, 3},
@@ -290,11 +277,10 @@ public sealed class SemanticVersionTest {
       ];
   }
 
-  public static TheoryData<(string? left, string? right, int compare)> ComparisonData()
-  {
-      return
-      [
-          ("1.0", "2.0", -1),
+  public static TheoryData<(string? left, string? right, int compare)> ComparisonData() {
+    return
+    [
+        ("1.0", "2.0", -1),
           ("1.2", "2.1", -1),
           ("1.2", "1.2.1", -1),
           ("1.2", "1.2.1-rc", -1),
@@ -302,10 +288,9 @@ public sealed class SemanticVersionTest {
       ];
   }
 
-  public static TheoryData<string> ValidVersionsToParse()
-  {
-      return [
-          "1",
+  public static TheoryData<string> ValidVersionsToParse() {
+    return [
+        "1",
           "1.2",
           "51.253.63.2",
           "51.253.63.2.6336.363",
@@ -319,10 +304,9 @@ public sealed class SemanticVersionTest {
       ];
   }
 
-  public static TheoryData<string?> InvalidVersionsToParse()
-  {
-      return [
-          null!,
+  public static TheoryData<string?> InvalidVersionsToParse() {
+    return [
+        null!,
           "",
           "   ",
           ".",

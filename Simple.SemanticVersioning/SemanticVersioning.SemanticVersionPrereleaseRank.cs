@@ -132,7 +132,7 @@ public sealed class SemanticVersionPrereleaseRank
     return Rank == other.Rank &&
            string.Equals(Prefix, other.Prefix, StringComparison.OrdinalIgnoreCase) &&
            string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase);
-    }
+  }
 
   /// <summary>
   /// Equals
@@ -146,7 +146,7 @@ public sealed class SemanticVersionPrereleaseRank
   /// </summary>
   /// <returns>Hash code</returns>
   public override int GetHashCode() => HashCode.Combine(
-      Rank, 
+      Rank,
       Prefix.GetHashCode(StringComparison.OrdinalIgnoreCase),
       Description.GetHashCode(StringComparison.Ordinal));
 
@@ -176,8 +176,8 @@ public sealed class SemanticVersionPrereleaseRank
     result = string.Compare(left.Prefix, right.Prefix, StringComparison.OrdinalIgnoreCase);
 
     if (result != 0)
-        return result;
-    
+      return result;
+
     return string.Compare(left.Description, right.Description, StringComparison.OrdinalIgnoreCase);
   }
 

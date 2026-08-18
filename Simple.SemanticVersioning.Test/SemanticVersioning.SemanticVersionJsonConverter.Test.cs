@@ -77,18 +77,18 @@ public sealed class SemanticVersionJsonConverterTest {
   public static TheoryData<SemanticVersion> ValidVersions() {
     return
     [
-        new SemanticVersion([1, 2, 3, 4, 5], "", "Meta-3+1"),
-            new SemanticVersion([1, 2, 3, 4, 5], "RC-1", ""),
-            new SemanticVersion([1, 2, 3, 4, 5], "RC-1", "Meta-3+1"),
-            new SemanticVersion(1, 2, 3, 4),
-            new SemanticVersion(1, 2, 3),
-            new SemanticVersion(1, 2),
-            new SemanticVersion(1),
-            new SemanticVersion(0),
-            new SemanticVersion([1, 2], "RC-X", "Meta-3+1"),
-            new SemanticVersion([1], "RC-X", "Meta-3+1"),
-            new SemanticVersion([1, 0, 5], "RC-X", "Meta-3+1"),
-        ];
+      new SemanticVersion([1, 2, 3, 4, 5], "", "Meta-3+1"),
+      new SemanticVersion([1, 2, 3, 4, 5], "RC-1", ""),
+      new SemanticVersion([1, 2, 3, 4, 5], "RC-1", "Meta-3+1"),
+      new SemanticVersion(1, 2, 3, 4),
+      new SemanticVersion(1, 2, 3),
+      new SemanticVersion(1, 2),
+      new SemanticVersion(1),
+      new SemanticVersion(0),
+      new SemanticVersion([1, 2], "RC-X", "Meta-3+1"),
+      new SemanticVersion([1], "RC-X", "Meta-3+1"),
+      new SemanticVersion([1, 0, 5], "RC-X", "Meta-3+1"),
+    ];
   }
 }
 
