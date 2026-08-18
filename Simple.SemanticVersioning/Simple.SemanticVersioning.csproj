@@ -12,11 +12,11 @@
     <PackageProjectUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>SemanticVersion;Version</PackageTags>
+    <PackageTags>Semver;Semantic;Versioning</PackageTags>
     <PackageIcon>Icon.png</PackageIcon>
 <Authors>Dmitrii Bychenko</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Semantic version</PackageReleaseNotes>
+    <PackageReleaseNotes>Semantic Version (senver) initial version</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
