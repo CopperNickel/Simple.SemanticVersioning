@@ -52,14 +52,14 @@ public sealed class SemanticVersionPrereleaseRank
   ];
 
   /// <summary>
-  /// Prefix
+  /// Prerelease suffix
   /// </summary>
-  public string Prefix { get; }
+  public string Suffix { get; }
 
   /// <summary>
-  /// Description
+  /// Prerelease descriptive name
   /// </summary>
-  public string Description { get; }
+  public string Name { get; }
 
   /// <summary>
   /// Rank
@@ -80,9 +80,9 @@ public sealed class SemanticVersionPrereleaseRank
 
   #region Create
 
-  private SemanticVersionPrereleaseRank(string prefix, string description, int rank) {
-    Prefix = prefix;
-    Description = description;
+  private SemanticVersionPrereleaseRank(string suffix, string name, int rank) {
+    Suffix = suffix;
+    Name = name;
     Rank = rank;
   }
 
@@ -99,19 +99,20 @@ public sealed class SemanticVersionPrereleaseRank
     if (string.IsNullOrWhiteSpace(suffix))
       return Release;
 
-    suffix = string.Concat(suffix.Trim().Where(char.IsLetter));
+    // Extract letters only to normalize variants like "beta-1" or "beta+x" to "beta"
+    suffix = string.Concat(suffix.Trim().TakeWhile(char.IsLetter));
 
     if (string.IsNullOrWhiteSpace(suffix))
       return Unknown;
 
-    return Ranks.FirstOrDefault(item => string.Equals(suffix, item.Prefix, StringComparison.OrdinalIgnoreCase)) ?? Unknown;
+    return Ranks.FirstOrDefault(item => string.Equals(suffix, item.Suffix, StringComparison.OrdinalIgnoreCase)) ?? Unknown;
   }
 
   /// <summary>
   /// To String
   /// </summary>
   /// <returns>String representation</returns>
-  public override string ToString() => Prefix;
+  public override string ToString() => Suffix;
 
   #endregion Public Methods
 
@@ -130,8 +131,8 @@ public sealed class SemanticVersionPrereleaseRank
       return false;
 
     return Rank == other.Rank &&
-           string.Equals(Prefix, other.Prefix, StringComparison.OrdinalIgnoreCase) &&
-           string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase);
+           string.Equals(Suffix, other.Suffix, StringComparison.OrdinalIgnoreCase) &&
+           string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
   }
 
   /// <summary>
@@ -147,8 +148,8 @@ public sealed class SemanticVersionPrereleaseRank
   /// <returns>Hash code</returns>
   public override int GetHashCode() => HashCode.Combine(
       Rank,
-      Prefix.GetHashCode(StringComparison.OrdinalIgnoreCase),
-      Description.GetHashCode(StringComparison.Ordinal));
+      Suffix.GetHashCode(StringComparison.OrdinalIgnoreCase),
+      Name.GetHashCode(StringComparison.Ordinal));
 
   #endregion IEquatable<SemanticVersionPrereleaseRank>
 
@@ -173,12 +174,12 @@ public sealed class SemanticVersionPrereleaseRank
     if (result != 0)
       return result;
 
-    result = string.Compare(left.Prefix, right.Prefix, StringComparison.OrdinalIgnoreCase);
+    result = string.Compare(left.Suffix, right.Suffix, StringComparison.OrdinalIgnoreCase);
 
     if (result != 0)
       return result;
 
-    return string.Compare(left.Description, right.Description, StringComparison.OrdinalIgnoreCase);
+    return string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
   }
 
   /// <summary>

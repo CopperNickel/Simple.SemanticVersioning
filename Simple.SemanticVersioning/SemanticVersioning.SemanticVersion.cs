@@ -224,7 +224,7 @@ public sealed class SemanticVersion :
   /// Hash code
   /// </summary>
   /// <returns>Hash code</returns>
-  public override int GetHashCode() => HashCode.Combine(m_Parts[0], m_Parts[1]);
+  public override int GetHashCode() => HashCode.Combine(this[0], this[1], this[2], this[3]);
 
   #endregion IEquatable<SemanticVersion>
 

@@ -22,7 +22,9 @@ internal sealed class SemanticVersionJsonConverter : JsonConverter<SemanticVersi
   public override SemanticVersion ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
     var s = reader.GetString();
 
-    return SemanticVersion.Parse(s);
+    return SemanticVersion.TryParse(s, null, out var result)
+      ? result
+      : throw new JsonException("Invalid semantic version");
   }
 
   public override void WriteAsPropertyName(Utf8JsonWriter writer, SemanticVersion value, JsonSerializerOptions options) {

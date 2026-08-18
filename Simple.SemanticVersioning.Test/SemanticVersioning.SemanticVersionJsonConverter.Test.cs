@@ -64,6 +64,18 @@ public sealed class SemanticVersionJsonConverterTest {
   }
 
   [Fact]
+  public void Deserealize_InvalidProperty_ExceptionThrown() {
+    // Arrange
+    var json = "{\"invalid\": 42}";
+
+    // Act
+    var error = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Dictionary<SemanticVersion, int>>(json, Options));
+
+    // Assert
+    Assert.Contains("invalid", error.Message, StringComparison.OrdinalIgnoreCase);
+  }
+
+  [Fact]
   public void Deserialize_InvalidType_ThrowsJsonException() {
     // Arrange
     var json = "[1, 2, 3]";

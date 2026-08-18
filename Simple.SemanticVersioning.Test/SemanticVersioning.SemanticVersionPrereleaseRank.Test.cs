@@ -3,7 +3,7 @@
 public sealed class SemanticVersionPrereleaseRankTest {
 
   [Fact]
-  public void Find_EmptyPrefix_FoundRelease() {
+  public void Find_EmptySuffix_FoundRelease() {
     // Act
     var rank = SemanticVersionPrereleaseRank.Find("");
 
@@ -14,10 +14,10 @@ public sealed class SemanticVersionPrereleaseRankTest {
   }
 
   [Theory]
-  [MemberData(nameof(KnownPrefixes))]
-  public void Find_KnownPrefix_Found(string prefix) {
+  [MemberData(nameof(KnownSuffixes))]
+  public void Find_KnownSuffix_Found(string suffix) {
     // Act
-    var rank = SemanticVersionPrereleaseRank.Find(prefix);
+    var rank = SemanticVersionPrereleaseRank.Find(suffix);
 
     // Assert
     Assert.NotNull(rank);
@@ -26,10 +26,10 @@ public sealed class SemanticVersionPrereleaseRankTest {
   }
 
   [Theory]
-  [MemberData(nameof(UnknownPrefixes))]
-  public void Find_UnknownPrefix_FoundUnknown(string prefix) {
+  [MemberData(nameof(UnknownSuffixes))]
+  public void Find_UnknownSuffix_FoundUnknown(string suffix) {
     // Act
-    var rank = SemanticVersionPrereleaseRank.Find(prefix);
+    var rank = SemanticVersionPrereleaseRank.Find(suffix);
 
     // Assert
     Assert.NotNull(rank);
@@ -37,6 +37,20 @@ public sealed class SemanticVersionPrereleaseRankTest {
     Assert.False(rank.IsKnown);
 
     Assert.Equal(SemanticVersionPrereleaseRank.Unknown, rank);
+  }
+
+  [Theory]
+  [InlineData("alpha123beta456", "alpha")]  // Multiple letters scattered
+  [InlineData("123", "")]  // Only numbers, should return Unknown
+  [InlineData("Beta!@#$%Alpha", "beta")]  // Special chars stripped
+  public void TryParse_UnusualPrereleaseSuffixes_HandledCorrectly(string suffix, string expectedSuffix) {
+    // Act
+    var rank = SemanticVersionPrereleaseRank.Find(suffix);
+
+    // Assert
+    Assert.NotNull(rank);
+
+    Assert.Equal(expectedSuffix, rank.Suffix, ignoreCase: true);
   }
 
   [Fact]
@@ -56,7 +70,7 @@ public sealed class SemanticVersionPrereleaseRankTest {
     // Assert
     var expected = ranks
       .OrderBy(x => x.Rank)
-      .ThenBy(x => x.Prefix, StringComparer.OrdinalIgnoreCase)
+      .ThenBy(x => x.Suffix, StringComparer.OrdinalIgnoreCase)
       .ToList();
 
     Assert.Equal(expected, sorted);
@@ -75,7 +89,7 @@ public sealed class SemanticVersionPrereleaseRankTest {
 
     // Act
     var result = ranks
-      .All(item => string.Equals(item.ToString(), item.Prefix));
+      .All(item => string.Equals(item.ToString(), item.Suffix));
 
     // Assert
     Assert.True(result);
@@ -114,7 +128,7 @@ public sealed class SemanticVersionPrereleaseRankTest {
     }
   }
 
-  public static TheoryData<string> KnownPrefixes => [
+  public static TheoryData<string> KnownSuffixes => [
     "dev",
     "alpha",
     "beta",
@@ -127,7 +141,7 @@ public sealed class SemanticVersionPrereleaseRankTest {
     "final"
   ];
 
-  public static TheoryData<string> UnknownPrefixes => [
+  public static TheoryData<string> UnknownSuffixes => [
     "Ma",
     "x",
     " x",

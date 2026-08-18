@@ -28,15 +28,24 @@ public sealed class SemanticVersionTest {
     Assert.Equal("", version.Prerelease);
   }
 
+  [Fact]
+  public void Create_VeryLargeVersionNumbers_Accepted() {
+    // Act
+    var version = new SemanticVersion([long.MaxValue, long.MaxValue, long.MaxValue]);
+
+    // Assert
+    Assert.True(version.Parts.All(item => item == long.MaxValue));
+  }
+
   [Theory]
   [MemberData(nameof(ValidVersions))]
   public void Create_Versions_Created(int[] items) {
     // Arrange
     var origin = new Version(
-  items.ElementAtOrDefault(0),
-        items.ElementAtOrDefault(1),
-        items.ElementAtOrDefault(2),
-        items.ElementAtOrDefault(3));
+      items.ElementAtOrDefault(0),
+      items.ElementAtOrDefault(1),
+      items.ElementAtOrDefault(2),
+      items.ElementAtOrDefault(3));
 
     // Act
     var version = new SemanticVersion(origin);
@@ -55,10 +64,10 @@ public sealed class SemanticVersionTest {
     var items = intItems.Select(item => (long)item).ToArray();
 
     var origin = new Version(
-        intItems.ElementAtOrDefault(0),
-        intItems.ElementAtOrDefault(1),
-        intItems.ElementAtOrDefault(2),
-        intItems.ElementAtOrDefault(3));
+      intItems.ElementAtOrDefault(0),
+      intItems.ElementAtOrDefault(1),
+      intItems.ElementAtOrDefault(2),
+      intItems.ElementAtOrDefault(3));
 
     // Act
     var version = new SemanticVersion(items);
@@ -79,9 +88,9 @@ public sealed class SemanticVersionTest {
   public void Create_negativeParts_Exception(string text) {
     // Arrange
     var parts = text
-        .Split('.')
-        .Select(item => int.Parse(item, NumberStyles.Any, CultureInfo.InvariantCulture))
-        .ToList();
+      .Split('.')
+      .Select(item => int.Parse(item, NumberStyles.Any, CultureInfo.InvariantCulture))
+      .ToList();
 
     // Act
     var error = Assert.Throws<ArgumentException>(() => new SemanticVersion(parts));
@@ -260,65 +269,67 @@ public sealed class SemanticVersionTest {
 
   public static TheoryData<int[]> ValidVersions() {
     return [
-        new [] {0},
-          new [] {1},
-          new [] {1, 2},
-          new [] {1, 2, 3},
-          new [] {1, 2, 3, 4},
-          new [] {1, 2, 3, 4, 5},
-          new [] {1, 2, 3, 4, 5, 6},
-
-          new [] {1, 2, 0, 0},
-          new [] {1, 2, 0, 3},
-          new [] {1, 2, 3, 4, 0},
-          new [] {0, 0, 1, 2},
-          new [] {0, 1, 2, 3},
-          new [] {0, 0, 0, 4},
-      ];
+      new [] {0},
+      new [] {1},
+      new [] {1, 2},
+      new [] {1, 2, 3},
+      new [] {1, 2, 3, 4},
+      new [] {1, 2, 3, 4, 5},
+      new [] {1, 2, 3, 4, 5, 6},
+      new [] {1, 2, 0, 0},
+      new [] {1, 2, 0, 3},
+      new [] {1, 2, 3, 4, 0},
+      new [] {0, 0, 1, 2},
+      new [] {0, 1, 2, 3},
+      new [] {0, 0, 0, 4},
+    ];
   }
 
   public static TheoryData<(string? left, string? right, int compare)> ComparisonData() {
-    return
-    [
-        ("1.0", "2.0", -1),
-          ("1.2", "2.1", -1),
-          ("1.2", "1.2.1", -1),
-          ("1.2", "1.2.1-rc", -1),
-          ("1.2", "1.2.1+rc", -1),
-      ];
+    return [
+      ("1.0", "2.0", -1),
+      ("1.2", "2.1", -1),
+      ("1.2", "1.2.1", -1),
+      ("1.2", "1.2.1-rc", -1),
+      ("1.2", "1.2.1+rc", -1),
+    ];
   }
 
   public static TheoryData<string> ValidVersionsToParse() {
     return [
-        "1",
-          "1.2",
-          "51.253.63.2",
-          "51.253.63.2.6336.363",
-          "51.253-zeta",
-          "51.253-zeta+theta",
-          "51.253+theta",
-          "51.253.63.2.6336.363-alpha2-7+fita-23+789",
-          "version 1.23.4566.36-a+b",
-          "ver 1.23.4566.36-a+b",
-          "v 1.23.4566.36-a+b",
-      ];
+      "1",
+      "1.2",
+      "51.253.63.2",
+      "51.253.63.2.6336.363",
+      "51.253-zeta",
+      "51.253-zeta+theta",
+      "51.253+theta",
+      "51.253.63.2.6336.363-alpha2-7+fita-23+789",
+      "version 1.23.4566.36-a+b",
+      "ver 1.23.4566.36-a+b",
+      "v 1.23.4566.36-a+b",
+      "1.2.3-alpha123beta456",
+      "1.2.3-123",
+      "1.2.3-Beta!@#$%Alpha",
+      "1234567890123456.98745692369621.88825364785963.236695485669"
+    ];
   }
 
   public static TheoryData<string?> InvalidVersionsToParse() {
     return [
-        null!,
-          "",
-          "   ",
-          ".",
-          "..-a",
-          "..-a+b",
-          "-1.23.45",
-          "a.b.c",
-          "-a+b",
-          "78.-123.65",
-          "version -1.23.4566.36-a+b",
-          "ver 1.-23.4566.36-a+b",
-          "v 1.23.-4566.36-a+b",
-      ];
+      null!,
+      "",
+      "   ",
+      ".",
+      "..-a",
+      "..-a+b",
+      "-1.23.45",
+      "a.b.c",
+      "-a+b",
+      "78.-123.65",
+      "version -1.23.4566.36-a+b",
+      "ver 1.-23.4566.36-a+b",
+      "v 1.23.-4566.36-a+b",
+    ];
   }
 }
