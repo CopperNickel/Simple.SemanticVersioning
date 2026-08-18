@@ -37,7 +37,7 @@ public sealed class SemanticVersionJsonConverterTest {
   }
 
   [Fact]
-  public void Seialize_InvalidVersion_ThrowsJsonException() {
+  public void Serialize_InvalidVersion_ThrowsJsonException() {
     // Arrange
     var invalidVersion = "\"invalid\"";
 
