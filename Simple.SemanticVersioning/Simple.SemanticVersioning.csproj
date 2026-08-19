@@ -32,7 +32,7 @@
 		<!-- Metadata -->
 		<Authors>Dmitrii Bychenko</Authors>
 		<Copyright>Copyright (c) 2026 Dmitrii Bychenko</Copyright>
-		<License>MIT</License>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 
 		<!-- Repository & Links -->
 		<PackageProjectUrl>https://github.com/CopperNickel/Simple.SemanticVersioning</PackageProjectUrl>
