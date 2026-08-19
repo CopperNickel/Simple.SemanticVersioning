@@ -291,8 +291,7 @@ public class VersionChecker
 ```csharp
 public class FeatureManager
 {
-    private static readonly SemanticVersion FeatureIntroduced = 
-        new(new[] { 2L, 1L, 0L }, null, null);
+    private static readonly SemanticVersion FeatureIntroduced = new(2, 1, 0);
 
     public bool IsFeatureAvailable(string currentVersion)
     {
