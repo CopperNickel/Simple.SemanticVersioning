@@ -16,6 +16,9 @@ public sealed class SemanticVersion :
     ISpanParsable<SemanticVersion> {
   #region Private fields and properties
 
+  private static readonly IReadOnlyList<string> PrefixesToRemove =
+    [.. new string[] { "version", "ver", "v", "ver.", "v." }.OrderByDescending(s => s.Length)];
+
   private readonly List<BigInteger> m_Parts = [];
 
   #endregion Private fields and properties
@@ -42,8 +45,12 @@ public sealed class SemanticVersion :
         m_Parts[index] = value;
 
         if (value == 0 && index == m_Parts.Count - 1) {
+          var count = 0;
+
           for (var i = m_Parts.Count - 1; i >= 0 && m_Parts[i] == BigInteger.Zero; --i)
-            m_Parts.RemoveAt(i);
+            count += 1;
+
+          m_Parts.RemoveRange(m_Parts.Count - count, count);
         }
       }
       else if (value > 0) {
@@ -229,8 +236,8 @@ public sealed class SemanticVersion :
   /// <summary>
   /// To string
   /// </summary>
-  /// <param name="format">Format, if any</param>
-  /// <param name="formatProvider">Format provider, if any</param>
+  /// <param name="format">Format for version parts, if any (g for general, n for numeric)</param>
+  /// <param name="formatProvider">Format provider, if any (invariant culture by default)</param>
   /// <returns>Formatted version</returns>
   public string ToString(string? format, IFormatProvider? formatProvider) {
     formatProvider ??= CultureInfo.InvariantCulture;
@@ -250,7 +257,7 @@ public sealed class SemanticVersion :
   /// <summary>
   /// To string
   /// </summary>
-  /// <param name="format">Format, if any</param>
+  /// <param name="format">Format for version parts, if any (g for general, n for numeric)</param>
   /// <returns>Formatted version</returns>
   public string ToString(string? format) => ToString(format, null);
 
@@ -296,7 +303,22 @@ public sealed class SemanticVersion :
   /// Hash code
   /// </summary>
   /// <returns>Hash code</returns>
-  public override int GetHashCode() => HashCode.Combine(this[0], this[1], this[2], this[3]);
+  public override int GetHashCode() {
+    var hashCode = new HashCode();
+
+    // Include up to 4 parts (most versions are X.Y.Z.W anyway)
+    for (int i = 0; i < Math.Min(m_Parts.Count, 4); ++i)
+      hashCode.Add(m_Parts[i]);
+
+    // But also include a flag for "has more parts"
+    if (m_Parts.Count > 4)
+      hashCode.Add(m_Parts.Count);
+
+    hashCode.Add(Prerelease);
+    hashCode.Add(Metadata);
+
+    return hashCode.ToHashCode();
+  }
 
   #endregion IEquatable<SemanticVersion>
 
@@ -356,14 +378,12 @@ public sealed class SemanticVersion :
 
     s = s.Trim();
 
-    if (s.StartsWith("version", StringComparison.CurrentCultureIgnoreCase))
-      s = s["version".Length..];
-    else if (s.StartsWith("ver", StringComparison.CurrentCultureIgnoreCase))
-      s = s["ver".Length..];
-    else if (s.StartsWith("v", StringComparison.CurrentCultureIgnoreCase))
-      s = s["v".Length..];
+    foreach (var prefix in PrefixesToRemove)
+      if (s.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) {
+        s = s[prefix.Length..].Trim();
 
-    s = s.Trim();
+        break;
+      }
 
     var pPlus = s.IndexOf('+');
     var pMinus = s.IndexOf('-');
@@ -478,6 +498,7 @@ public sealed class SemanticVersion :
 
   /// <summary>
   /// Equal operator
+  /// Two null instances are considered equal.
   /// </summary>
   /// <param name="left">Left operand</param>
   /// <param name="right">Right operand</param>
@@ -486,6 +507,7 @@ public sealed class SemanticVersion :
 
   /// <summary>
   /// Not equal operator
+  /// Two null instances are considered equal.
   /// </summary>
   /// <param name="left">Left operand</param>
   /// <param name="right">Right operand</param>
@@ -493,7 +515,7 @@ public sealed class SemanticVersion :
   public static bool operator !=(SemanticVersion left, SemanticVersion right) => Compare(left, right) != 0;
 
   /// <summary>
-  /// Less than operator
+  /// Less than operator (null is treated as the lowest value)
   /// </summary>
   /// <param name="left">Left operand</param>
   /// <param name="right">Right operand</param>
@@ -501,7 +523,7 @@ public sealed class SemanticVersion :
   public static bool operator <(SemanticVersion left, SemanticVersion right) => Compare(left, right) < 0;
 
   /// <summary>
-  /// Greater than operator
+  /// Greater than operator (null is treated as the lowest value)
   /// </summary>
   /// <param name="left">Left operand</param>
   /// <param name="right">Right operand</param>
@@ -509,7 +531,8 @@ public sealed class SemanticVersion :
   public static bool operator >(SemanticVersion left, SemanticVersion right) => Compare(left, right) > 0;
 
   /// <summary>
-  /// Less than or equal operator
+  /// Less than or equal operator (null is treated as the lowest value)
+  /// Two null instances are considered equal.
   /// </summary>
   /// <param name="left">Left operand</param>
   /// <param name="right">Right operand</param>
@@ -517,7 +540,8 @@ public sealed class SemanticVersion :
   public static bool operator <=(SemanticVersion left, SemanticVersion right) => Compare(left, right) <= 0;
 
   /// <summary>
-  /// Greater than or equal operator
+  /// Greater than or equal operator (null is treated as the lowest value)
+  /// Two null instances are considered equal.
   /// </summary>
   /// <param name="left">Left operand</param>
   /// <param name="right">Right operand</param>

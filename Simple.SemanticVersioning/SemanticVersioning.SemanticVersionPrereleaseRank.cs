@@ -100,7 +100,7 @@ public sealed class SemanticVersionPrereleaseRank
       return Release;
 
     // Extract letters only to normalize variants like "beta-1" or "beta+x" to "beta"
-    suffix = string.Concat(suffix.Trim().TakeWhile(char.IsLetter));
+    suffix = string.Concat(suffix.Trim().TakeWhile(char.IsAsciiLetter));
 
     if (string.IsNullOrWhiteSpace(suffix))
       return Unknown;
