@@ -1,46 +1,76 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AssemblyTitle>Semantic Version</AssemblyTitle>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Title>Simple.SemanticVersion</Title>
-    <Description>Semantic Version</Description>
-    <Copyright>Copyright (c) 2026 Dmitrii Bychenko</Copyright>
-    <PackageProjectUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>Semver;Semantic;Versioning</PackageTags>
-    <PackageIcon>Icon.png</PackageIcon>
-    <Authors>Dmitrii Bychenko</Authors>
-	<Version>1.0.0</Version>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Semantic Version (senver) initial version</PackageReleaseNotes>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>9999</WarningLevel>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-  </PropertyGroup>
+		<!-- Package Identity -->
+		<AssemblyTitle>Semantic Version</AssemblyTitle>
+		<Title>Simple.SemanticVersioning</Title>
+		<Description>A lightweight, high-performance .NET 10 library for parsing, creating, and comparing semantic versions according to the Semantic Versioning 2.0.0 specification. Features arbitrary-precision version numbers, automatic prerelease rank detection, multiple comparison strategies, and full JSON serialization support. Zero external dependencies.</Description>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <WarningLevel>9999</WarningLevel>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-  </PropertyGroup>
+		<!-- Version & Release -->
+		<Version>1.0.0</Version>
+		<PackageReleaseNotes>
+			v1.0.0 - Initial Release
 
-  <ItemGroup>
-    <None Include="..\Icon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+			✨ Production-ready semantic versioning library.
+
+			Features:
+			• Full Semantic Versioning 2.0.0 compliance
+			• Arbitrary-precision version numbers (BigInteger)
+			• Comprehensive prerelease rank detection
+			• Multiple comparison strategies
+			• JSON serialization support
+			• 237 comprehensive unit tests
+			• Zero dependencies
+
+			📚 Docs: https://github.com/CopperNickel/Simple.SemanticVersioning#readme
+		</PackageReleaseNotes>
+
+		<!-- Metadata -->
+		<Authors>Dmitrii Bychenko</Authors>
+		<Copyright>Copyright (c) 2026 Dmitrii Bychenko</Copyright>
+		<License>MIT</License>
+
+		<!-- Repository & Links -->
+		<PackageProjectUrl>https://github.com/CopperNickel/Simple.SemanticVersioning</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/CopperNickel/Simple.SemanticVersioning.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+
+		<!-- Package Appearance -->
+		<PackageIcon>Icon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>semver;semantic;versioning;version;parser;comparison;nuget</PackageTags>
+
+		<!-- Localization -->
+		<NeutralLanguage>en-US</NeutralLanguage>
+
+		<!-- Build Options -->
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningLevel>9999</WarningLevel>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<WarningLevel>9999</WarningLevel>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\Icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>
