@@ -44,6 +44,9 @@ var version = new SemanticVersion(
 var v1 = new SemanticVersion(1, 0, 0);
 var v2 = new SemanticVersion(2, 5);
 
+// Create simple version from different integer types
+var v3 = SemanticVersion.Create(1L, BigInteger.Zero, 5);
+
 // Access version components
 Console.WriteLine(version.Major);        // 1
 Console.WriteLine(version.Minor);        // 2
