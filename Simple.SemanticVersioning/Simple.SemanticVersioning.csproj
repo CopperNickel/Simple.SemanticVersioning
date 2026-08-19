@@ -14,7 +14,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Semver;Semantic;Versioning</PackageTags>
     <PackageIcon>Icon.png</PackageIcon>
-<Authors>Dmitrii Bychenko</Authors>
+    <Authors>Dmitrii Bychenko</Authors>
+	<Version>1.0.0</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReleaseNotes>Semantic Version (senver) initial version</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
