@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Numerics;
 using System.Text.Json.Serialization;
 
 namespace Simple.SemanticVersioning;
@@ -15,7 +16,7 @@ public sealed class SemanticVersion :
     ISpanParsable<SemanticVersion> {
   #region Private fields and properties
 
-  private readonly List<long> m_Parts = [];
+  private readonly List<BigInteger> m_Parts = [];
 
   #endregion Private fields and properties
 
@@ -24,14 +25,14 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Version parts (Major, Minor etc.), rightmost zeroes are trimmed
   /// </summary>
-  public IReadOnlyList<long> Parts => m_Parts;
+  public IReadOnlyList<BigInteger> Parts => m_Parts;
 
   /// <summary>
   /// Version part
   /// </summary>
   /// <param name="index">Index</param>
   /// <returns>Version part or 0</returns>
-  public long this[int index] {
+  public BigInteger this[int index] {
     get => index >= 0 && index < m_Parts.Count ? m_Parts[index] : 0;
     private set {
       ArgumentOutOfRangeException.ThrowIfNegative(index);
@@ -41,12 +42,12 @@ public sealed class SemanticVersion :
         m_Parts[index] = value;
 
         if (value == 0 && index == m_Parts.Count - 1) {
-          for (var i = m_Parts.Count - 1; i >= 0 && m_Parts[i] == 0; --i)
+          for (var i = m_Parts.Count - 1; i >= 0 && m_Parts[i] == BigInteger.Zero; --i)
             m_Parts.RemoveAt(i);
         }
       }
       else if (value > 0) {
-        m_Parts.AddRange(Enumerable.Repeat(0L, index - m_Parts.Count));
+        m_Parts.AddRange(Enumerable.Repeat(BigInteger.Zero, index - m_Parts.Count));
 
         m_Parts.Add(value);
       }
@@ -56,7 +57,7 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Major
   /// </summary>
-  public long Major {
+  public BigInteger Major {
     get => this[0];
     init => this[0] = value;
   }
@@ -64,7 +65,7 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Minor
   /// </summary>
-  public long Minor {
+  public BigInteger Minor {
     get => this[1];
     init => this[1] = value;
   }
@@ -72,7 +73,7 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Patch
   /// </summary>
-  public long Patch {
+  public BigInteger Patch {
     get => this[2];
     init => this[2] = value;
   }
@@ -80,7 +81,7 @@ public sealed class SemanticVersion :
   /// <summary>
   /// Revision
   /// </summary>
-  public long Revision {
+  public BigInteger Revision {
     get => this[3];
     init => this[3] = value;
   }
@@ -132,7 +133,7 @@ public sealed class SemanticVersion :
   /// <param name="parts"></param>
   /// <param name="prerelease">Prerelease, if any</param>
   /// <param name="metadata">Metadata, if any</param>
-  public SemanticVersion(IEnumerable<long> parts, string? prerelease, string? metadata) {
+  public SemanticVersion(IEnumerable<BigInteger> parts, string? prerelease, string? metadata) {
     ArgumentNullException.ThrowIfNull(parts);
 
     m_Parts = [.. parts];
@@ -162,13 +163,13 @@ public sealed class SemanticVersion :
   /// <param name="prerelease">Prerelease, if any</param>
   /// <param name="metadata">Metadata, if any</param>
   public SemanticVersion(IEnumerable<int> parts, string? prerelease, string? metadata)
-    : this(parts.Select(item => (long)item), prerelease, metadata) { }
+    : this(parts.Select(item => (BigInteger)item), prerelease, metadata) { }
 
   /// <summary>
   /// Standard constructor
   /// </summary>
   /// <param name="parts"></param>
-  public SemanticVersion(params IEnumerable<long> parts)
+  public SemanticVersion(params IEnumerable<BigInteger> parts)
     : this(parts, null, null) { }
 
   /// <summary>
@@ -176,7 +177,7 @@ public sealed class SemanticVersion :
   /// </summary>
   /// <param name="parts"></param>
   public SemanticVersion(params IEnumerable<int> parts)
-    : this(parts.Select(item => (long)item), null, null) { }
+    : this(parts.Select(item => (BigInteger)item), null, null) { }
 
   /// <summary>
   /// Constructor from another semantic version (constructor copy)
@@ -196,6 +197,30 @@ public sealed class SemanticVersion :
   /// <param name="version">Version</param>
   public SemanticVersion(Version version)
     : this(version.Major, version.Minor, version.Build, version.Revision) { }
+
+  /// <summary>
+  /// Create semantic version from parts
+  /// </summary>
+  /// <typeparam name="T">Arbitrary precision integer type</typeparam>
+  /// <param name="source">Version Parts</param>
+  /// <returns>Semantic version</returns>
+  public static SemanticVersion Create<T>(params IEnumerable<T> source) where T : IBinaryInteger<T> {
+    return Create(source, null, null);
+  }
+
+  /// <summary>
+  /// Create semantic version from parts
+  /// </summary>
+  /// <typeparam name="T">Arbitrary precision integer type</typeparam>
+  /// <param name="source">Version Parts</param>
+  /// <param name="prerelease">Prerelease, if any</param>
+  /// <param name="metadata">Metadata, if any</param>
+  /// <returns>Semantic version</returns>
+  public static SemanticVersion Create<T>(IEnumerable<T> source, string? prerelease = null, string? metadata = null) where T : IBinaryInteger<T> {
+    ArgumentNullException.ThrowIfNull(source);
+
+    return new SemanticVersion(source.Select(BigInteger.CreateSaturating), prerelease, metadata);
+  }
 
   #endregion Create
 
@@ -249,8 +274,8 @@ public sealed class SemanticVersion :
       return false;
 
     for (var i = 0; i < Math.Max(m_Parts.Count, other.m_Parts.Count); ++i) {
-      var left = i < m_Parts.Count ? m_Parts[i] : 0;
-      var right = i < other.m_Parts.Count ? other.m_Parts[i] : 0;
+      var left = i < m_Parts.Count ? m_Parts[i] : BigInteger.Zero;
+      var right = i < other.m_Parts.Count ? other.m_Parts[i] : BigInteger.Zero;
 
       if (left != right)
         return false;
@@ -372,12 +397,12 @@ public sealed class SemanticVersion :
 
     using var en = s.Split('.');
 
-    var parts = new List<long>(5);
+    var parts = new List<BigInteger>(5);
 
     while (en.MoveNext()) {
       var span = s[en.Current.Start.Value..en.Current.End.Value];
 
-      if (long.TryParse(span, NumberStyles.Any, provider, out var part))
+      if (BigInteger.TryParse(span, NumberStyles.Any, provider, out var part))
         parts.Add(part);
       else
         return false;

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Numerics;
 
 namespace Simple.SemanticVersioning.Test;
 
@@ -20,7 +21,7 @@ public sealed class SemanticVersionTest {
         .Reverse()
         .SkipWhile(item => item == 0)
         .Reverse()
-        .Select(item => (long)item);
+        .Select(item => (BigInteger)item);
 
     Assert.True(version.Parts.SequenceEqual(expected));
 
@@ -47,6 +48,24 @@ public sealed class SemanticVersionTest {
 
     // Act and Assert
     Assert.Throws<ArgumentNullException>(() => new SemanticVersion(origin));
+  }
+
+  [Fact]
+  public void Create_FactoryMethod_Created() {
+    // Arrange and Act
+    var version = SemanticVersion.Create([1, 2L, BigInteger.Zero, 4], "alpha", "test");
+
+    // Assert
+    Assert.Equal("1.2.0.4-alpha+test", version.ToString());
+  }
+
+  [Fact]
+  public void Create_FactoryMethodShort_Created() {
+    // Arrange and Act
+    var version = SemanticVersion.Create(1, 2L, BigInteger.Zero, 4);
+
+    // Assert
+    Assert.Equal("1.2.0.4", version.ToString());
   }
 
   [Fact]
@@ -125,7 +144,7 @@ public sealed class SemanticVersionTest {
   [MemberData(nameof(ValidVersions))]
   public void Create_VersionsInLong_Created(int[] intItems) {
     // Arrange
-    var items = intItems.Select(item => (long)item).ToArray();
+    var items = intItems.Select(item => (BigInteger)item).ToArray();
 
     var origin = new Version(
       intItems.ElementAtOrDefault(0),
@@ -187,7 +206,7 @@ public sealed class SemanticVersionTest {
 
   [Theory]
   [InlineData("", "1.20.30.123456.9-beta+test")]
-  [InlineData("x", "1.14.1e.1e240.9-beta+test")]
+  [InlineData("x2", "01.14.1e.1e240.09-beta+test")]
   [InlineData("d3", "001.020.030.123456.009-beta+test")]
   public void ToString_Represented(string format, string expected) {
     // Arrange
